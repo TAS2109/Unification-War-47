@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>（タイトル未定）</title>
+<title>Unification War 47</title>
 <style>
 :root{--bg:#0f1720;--pn:#17222e;--ln:#2a3a4a;--tx:#e6edf3;--mu:#8aa0b4;--ac:#e0a030;--rd:#d9534f;--gn:#4caf70}
 *{box-sizing:border-box}
@@ -17,6 +17,7 @@ header .sp button{padding:3px 8px}header .sp button.on{background:var(--ac);colo
 #main{flex:1;min-height:0;display:flex;flex-direction:column}
 #mapwrap{flex:1;min-height:0;position:relative;background:#0b2233}
 #cv{width:100%;height:100%;display:block;touch-action:none}
+#mmenu{position:absolute;right:48px;top:8px;background:#000d;border:1px solid #445;border-radius:8px;padding:4px;display:flex;flex-direction:column;gap:3px;z-index:5}#mmenu button{height:30px;padding:0 10px;font-size:13px;text-align:left;white-space:nowrap}#mmenu button.on{background:var(--ac);color:#111}#mlegend{position:absolute;left:8px;top:8px;background:#000b;padding:4px 8px;border-radius:8px;font-size:12px;pointer-events:none;max-width:62%;line-height:1.7}
 #zoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px}
 #zoom button{width:34px;height:34px;padding:0;font-size:18px}
 #toast{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#000c;padding:6px 12px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
@@ -57,6 +58,16 @@ header .sp button{padding:3px 8px}header .sp button.on{background:var(--ac);colo
 .ov select{width:100%;padding:10px;margin:6px 0}
 .ov button{width:100%;padding:11px;margin:5px 0}
 #slots{align-items:flex-start}#slots>div{margin:auto}
+#tbg{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.6}
+#title{background:radial-gradient(ellipse at 50% 30%,#1b2b3d,#0b1118 70%)}
+#title .tw{position:relative;z-index:1;animation:tin .9s ease both}
+#title h1{font-size:40px;letter-spacing:.12em;line-height:1.05;margin:6px 0 8px;text-shadow:0 2px 14px #000a}
+#title h1 b{color:var(--rd);font-size:1.25em}
+.tk{font-size:11px;letter-spacing:.3em;color:var(--mu)}
+.tline{height:2px;width:120px;margin:8px auto 10px;background:linear-gradient(90deg,transparent,var(--ac),transparent)}
+.tsub{margin:0 0 18px;font-size:13px}
+.trow{display:flex;gap:6px}.trow button{width:50%}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .hide{display:none!important}
 </style></head><body>
 <div id="app">
@@ -67,29 +78,50 @@ header .sp button{padding:3px 8px}header .sp button.on{background:var(--ac);colo
 <div id="main">
  <div id="mapwrap"><canvas id="cv"></canvas>
   <div id="zoom"><button id="zi">＋</button><button id="zo">－</button><button id="zr">⌖</button><button id="zm">◐</button><button id="zp" title="パネル開閉">▤</button><button id="zc" title="首都へ">★</button></div>
-  <div id="selbar" class="hide"></div><div id="toast"></div></div>
+  <div id="mmenu" class="hide"></div><div id="mlegend" class="hide"></div><div id="selbar" class="hide"></div><div id="toast"></div></div>
  <div id="side"><div id="tabs"></div><div id="panel"></div></div>
 </div>
 </div>
 
-<div id="title" class="ov"><div>
- <h1>（タイトル未定）</h1>
- <p class="mu">47の国家が生まれた日本を統一せよ。</p>
- <select id="selPref"></select>
- <select id="selDiff"><option value="0.6">AI積極度：低</option><option value="1" selected>AI積極度：普通</option><option value="1.6">AI積極度：高</option></select>
- <button class="pri" id="bStart">シングルプレイ開始</button>
- <button id="bRand">ランダムな国で開始</button>
- <button id="bCont" class="hide">続きから（ロード）</button>
- <button disabled>オンラインプレイ（準備中）</button>
+<div id="title" class="ov"><canvas id="tbg"></canvas><div class="tw">
+ <div class="tlogo"><span class="tk">47 NATIONS ・ ONE JAPAN</span><h1>UNIFICATION<br>WAR <b>47</b></h1><div class="tline"></div></div>
+ <p class="mu tsub">47の国家が生まれた日本を統一せよ。</p>
+ <div id="tMain">
+  <button class="pri" id="bSingle">シングルプレイ</button>
+  <button id="bCont" class="hide">続きから（ロード）</button>
+  <button id="tHelp">遊び方</button>
+  <button disabled>オンラインプレイ（準備中）</button>
+  <div class="trow"><button id="tSnd"></button><button id="tBgm"></button></div>
+ </div>
+ <div id="tSet" class="hide" style="text-align:left">
+  <div class="mu">担当する国</div><select id="selPref"></select>
+  <div class="mu">難易度</div><select id="selDiff"></select><div class="mu" id="diffNote"></div>
+  <div class="mu" style="margin-top:6px">ゲームモード</div><select id="selMode"></select><div class="mu" id="modeNote"></div>
+  <button class="pri" id="bStart" style="margin-top:12px">この国で開始</button>
+  <button id="bRand">ランダムな国で開始</button>
+  <button id="bBack">戻る</button>
+ </div>
 </div></div>
 
 <div id="menu" class="ov hide"><div>
  <h1>メニュー</h1>
- <div id="apBox"></div><button id="mSave">セーブ / ロード</button><button id="mTitle" class="dg">タイトルへ戻る</button><button id="mClose" class="pri">閉じる</button>
+ <button id="bSnd"></button> <button id="bBgm"></button> <div id="apBox"></div><button id="mHelp">遊び方</button><button id="mSave">セーブ / ロード</button><button id="mCard">結果カード</button><button id="mTitle" class="dg">タイトルへ戻る</button><button id="mClose" class="pri">閉じる</button>
 </div></div>
 
 <div id="slots" class="ov hide"><div id="slotBody" style="text-align:left;max-width:460px"></div></div>
+<div id="help" class="ov hide"><div style="text-align:left;font-size:13px"><h1 style="text-align:center">遊び方</h1>
+<p><b>目的</b>：47県が独立した日本で、自国を育てて他国を併合し日本統一を目指します。<br><b>全国統一</b>＝自国と同盟国で全ブロックの100%を領有／<b>完全統一</b>＝自国だけで100%を領有。達成後も続行できます。</p><p><b>難易度・モード</b>：難易度（5段階）はAIの好戦度と収入、モード（早期決戦／通常／長期決戦）は初期兵力・資金、戦闘の損耗率、AIの開戦頻度を変えます。</p><p><b>保存</b>：メニューの「セーブ / ロード」からファイルへの書き出し・読み込みができます。「結果カード」は戦況を画像で保存できます。</p>
+<p><b>地図</b>：ドラッグで移動、ピンチ／＋－でズーム。右上の◐でマップ表示を選べます（政治・地形・補給・不穏度・脅威・外交・収入・人口・特産品・戦争）。選ぶと左上に凡例が出ます。師団は拡大時だけ表示されます。</p>
+<p><b>格差補正</b>：人口の少ない県ほど収入・初期資金・初期兵力に補正が付き、大県は収入が下がります（収入×0.6〜2.2）。
+<p><b>内政</b>：インフラ・技術・商業振興・税率・工場・国策・国債、県ごとの開発・要塞・慰撫。収入には貿易・関税・都市・同盟事業・講和の賠償金も加わります。ブロックごとの特産（農地・鉱山・港湾・観光地・工業地帯）も収入源で、鉱山・工業地帯は装備生産も増やします。特産の配置や「世情」、各国の初期状態は毎回ランダムです。不穏度が高い占領地は反乱の恐れがあるので鎮静や駐屯を。</p>
+<p><b>外交</b>：開戦理由を作って宣戦、同盟・貿易。同盟国の同盟国は自動で同盟国になります（同盟圏は最大6国）。同盟圏は同じ色で表示されます。<br><b>貿易</b>は隣国〜2国先、または港同士の海路の国とだけ結べ、貿易枠（領土・港で増加）までです。収益は相手の特産品が自国に無いほど増えます。<b>開戦理由</b>は領土回復・国境紛争・領有権の主張・同盟国防衛・同盟国領の解放・背信者討伐・覇権阻止・国際的非難があり、種類で戦争目標数や悪名が変わります。</p>
+<p><b>軍事</b>：師団を選んで移動先をタップ。「国境へ均等配置」「分散（固まった師団を隣の自領へ散らす）」「自動攻略」「自動駐屯」で省力化。補給が切れた師団は消耗します。</p>
+<p><b>兵種</b>：歩兵・機甲・砲兵・山岳兵。地形（平地・丘陵・山岳・都市）との相性があり、砲兵を攻撃隊に混ぜると有利です。</p>
+<p><b>海軍と航路</b>：港のあるブロックで駆逐艦隊・戦艦・輸送艦隊を建造できます（装備と資金が必要、維持費は陸軍より高め）。艦隊は海岸沿いと航路（地図の水色の点線）を高速で移動し、敵艦隊や港の守備隊と戦います。領土は占領できませんが、敵港に居座ると<b>封鎖</b>して収入を-40%にします。自軍の艦隊がいる港から出発する陸軍は海を越える移動が速くなり、上陸攻撃の不利も解消。戦艦は同じ港から攻める陸軍に艦砲支援（攻撃力アップ）を与えます。離島へは、まず艦隊で海を押さえてから陸軍を送りましょう。航路は大幅に増えました。</p>
+<p><b>戦争</b>：県を占領すると戦争スコアが上がり、講和で要求できます。残り1県の国は、敵に囲まれると師団が消耗し、兵力差2倍または戦争スコア50以上で膠着すると自動併合されます（あなたの国は自動併合されません）。最後の県は講和で半額で要求でき、領土が0になった国は即座に滅亡します。</p>
+<button class="pri" id="hClose">閉じる</button></div></div>
 <div id="end" class="ov hide"><div id="endBody"></div></div>
+<div id="card" class="ov hide"><div id="cardBody"></div></div>
 <div id="dlg" class="ov hide"><div id="dlgBody" style="text-align:left"></div></div>
 
 <script>
@@ -112,8 +144,41 @@ const TP=P.map(()=>0);
 [12,13,22,26,39].forEach(i=>TP[i]=3);
 const T=(()=>{const best={};BL.forEach((b,i)=>{if(!(b[0] in best)||b[5]>BL[best[b[0]]][5])best[b[0]]=i});return BL.map((b,i)=>TP[b[0]]===3?(best[b[0]]===i?3:0):TP[b[0]])})();
 let mmode=0;
+// ===== 効果音（WebAudio合成・控えめ音量） =====
+const SFX=(()=>{let ctx=null,lv=1,last={},skip=0;const MV=[0,.55,1];
+ try{const v=localStorage.getItem("jp47_snd");lv=v===null?1:+v;if(!(lv>=0&&lv<=2))lv=1}catch(e){lv=1}
+ const ensure=()=>{if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(ctx.state==="suspended")ctx.resume();return ctx};
+ function tone(f,t,d,type,v,f2){const c=ctx,o=c.createOscillator(),g=c.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.03)}
+ function noise(t,d,v,fc){const c=ctx,n=Math.max(1,Math.floor(c.sampleRate*d)),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);
+  const s=c.createBufferSource();s.buffer=b;const f=c.createBiquadFilter();f.type="bandpass";f.frequency.value=fc;const g=c.createGain();g.gain.value=v;s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}
+ const P={
+  click:(t,m)=>tone(1100,t,.035,"sine",.05*m),
+  order:(t,m)=>{tone(620,t,.06,"triangle",.06*m);tone(780,t+.06,.06,"triangle",.05*m)},
+  good:(t,m)=>{tone(660,t,.12,"triangle",.07*m);tone(880,t+.1,.18,"triangle",.07*m)},
+  bad:(t,m)=>tone(260,t,.18,"triangle",.06*m,170),
+  battle:(t,m)=>{noise(t,.14,.09*m,900);tone(120,t,.18,"sine",.1*m,55)},
+  conquest:(t,m)=>[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,"triangle",.07*m)),
+  war:(t,m)=>{tone(196,t,.5,"sawtooth",.05*m);tone(147,t+.22,.6,"sawtooth",.05*m);noise(t,.25,.05*m,300)},
+  attack:(t,m)=>{tone(540,t,.09,"square",.04*m);tone(540,t+.14,.09,"square",.04*m)},
+  lost:(t,m)=>{tone(440,t,.5,"triangle",.07*m,200);noise(t,.2,.05*m,500)},
+  rebel:(t,m)=>{for(let i=0;i<3;i++)tone(330,t+i*.12,.08,"square",.035*m)},
+  doom:(t,m)=>[392,330,262,196].forEach((f,i)=>tone(f,t+i*.2,.4,"triangle",.07*m)),
+  win:(t,m)=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.13,.35,"triangle",.08*m)),
+  lose:(t,m)=>[330,262,220,165].forEach((f,i)=>tone(f,t+i*.25,.5,"triangle",.07*m))};
+ function play(k,cd){if(!lv||!P[k])return;const now=performance.now();if(now-(last[k]||0)<(cd||300)||now-(last._a||0)<70)return;last[k]=last._a=now;const c=ensure();if(!c)return;try{P[k](c.currentTime+.005,MV[lv])}catch(e){}}
+ function text(t){if(skip||!lv||typeof t!=="string")return;
+  if(/断った|拒否|できない|不調|足りない|失効|終了|見送/.test(t))play("bad",500);
+  else if(/滅亡/.test(t))play("doom",1000);
+  else if(/制圧した|併合した/.test(t))play("conquest",600);
+  else if(/宣戦布告した/.test(t))play("war",800);
+  else if(/戦闘開始|戦いに加わった/.test(t))play("battle",500);
+  else if(/成立|結んだ|同盟関係|成功|完成した|慰撫|商業振興/.test(t))play("good",400);
+  else if(/個師団に命令/.test(t))play("order",200)}
+ return{play,text,unlock:ensure,get lv(){return lv},mute(v){skip=v},cycle(){lv=(lv+1)%3;try{localStorage.setItem("jp47_snd",lv)}catch(e){}ensure();play("good",0);return lv}}})();
+
 // ===== 工場・装備 =====
-const POL={rich:["富国","収入+15%／軍の維持費+25%"],army:["強兵","装備生産+40%／維持費-20%／収入-8%"],stab:["安定統治","不穏度の上昇-50%"],diplo:["善隣外交","悪名の減少×4／貿易1件あたり収入+2"]};
+const POL={rich:["富国","収入+15%／軍の維持費+25%"],army:["強兵","装備生産+40%／維持費-20%／収入-8%"],stab:["安定統治","不穏度の上昇-50%"],diplo:["善隣外交","悪名の減少×4／貿易収益+50%・貿易枠+2"]};
 const POLCD=60,POLCOST=100;
 const msOf=n=>n.ms===undefined?.3:n.ms;
 const costDev=i=>Math.round(80*Math.pow(1.5,S.prov[i].dev||0)*(1+S.prov[i].pop/150)),costFort=i=>Math.round(120*((S.prov[i].fort||0)+1)*(1+blockVal(i)/10));
@@ -121,7 +186,7 @@ function doDev(n,i){const p=S.prov[i];if(p.owner!==n.id||(p.dev||0)>=5||n.gold<c
 function doFort(n,i){const p=S.prov[i];if(p.owner!==n.id||(p.fort||0)>=3||n.gold<costFort(i))return false;n.gold-=costFort(i);p.fort=(p.fort||0)+1;return true}
 function setPol(n,k){if(n.pol===k||n.gold<POLCOST||S.day-(n.polT===undefined?-999:n.polT)<POLCD)return false;n.gold-=POLCOST;n.pol=k;n.polT=S.day;logm(`${n.name}国が国策「${POL[k][0]}」を採用した。`);return true}
 const facOf=n=>owned(n.id).reduce((s,i)=>s+S.prov[i].pop*BE[i]/40,0)+(n.fb||0);
-const prod=n=>facOf(n)*msOf(n)*.4*(n.pol==="army"?1.4:1);
+const prod=n=>(facOf(n)*msOf(n)*.4+resEq(n))*(n.pol==="army"?1.4:1);
 const costFac=n=>Math.round(120*Math.pow(1.15,(n.fb||0)/2));
 function doFac(n){if(n.gold<costFac(n))return false;n.gold-=costFac(n);n.fb=(n.fb||0)+2;return true}
 function capOf(id){if(S.prov[CAPB[id]].owner===id)return CAPB[id];let b=-1,m=-1;S.prov.forEach((p,i)=>{if(p.owner===id&&p.pop>m){m=p.pop;b=i}});return b}
@@ -145,11 +210,29 @@ function refreshBloc(){const par=S.nations.map((_,i)=>i),f=x=>par[x]===x?x:(par[
  BLOC=S.nations.map((n,i)=>n.alive?lead[f(i)]:i)}
 const colOf=id=>S.nations[BLOC[id]!==undefined?BLOC[id]:id].color;
 const lumOf=h=>{const c=[1,3,5].map(k=>parseInt(h.substr(k,2),16));return .3*c[0]+.59*c[1]+.11*c[2]};
+const hcOf=pop=>Math.max(.6,Math.min(2.2,Math.pow(300/pop,.5))),armyOf=pop=>Math.round(24+1.1*Math.sqrt(pop));
+const DIFFS=[{n:"とても易しい",ag:.4,eco:.8,note:"AIは消極的で、収入も控えめ。"},{n:"易しい",ag:.7,eco:.9,note:"AIの開戦はやや少なめ、収入も少し低め。"},{n:"普通",ag:1,eco:1,note:"標準の設定。"},{n:"難しい",ag:1.5,eco:1.15,note:"AIが好戦的で、収入も+15%。"},{n:"とても難しい",ag:2.2,eco:1.3,note:"AIが非常に好戦的で、収入も+30%。"}];
+const MODES={early:{n:"早期決戦",ag:1.6,army:1.4,gold:1.5,dmg:1.5,note:"初期兵力×1.4・資金×1.5。戦闘の損耗が激しく、AIも好戦的。短期間で決着します。"},normal:{n:"通常",ag:1,army:1,gold:1,dmg:1,note:"標準の進行速度。"},long:{n:"長期決戦",ag:.6,army:.85,gold:.8,dmg:.6,note:"初期兵力×0.85・資金×0.8。損耗が小さく戦線が膠着しやすく、AIの開戦も控えめ。内政をじっくり進められます。"}};
+const RESN=["農地","鉱山","港湾","観光地","工業地帯"],RESB=[1.3,1.1,1.5,1.7,1.1];
+const WORLDS=[{n:"平穏な世",d:"AIの開戦が減る",ag:.8},{n:"動乱の世",d:"AIの開戦が増える",ag:1.3},{n:"農業の黄金期",d:"農地の収入+50%",rm:[1.5,1,1,1,1]},{n:"資源ブーム",d:"鉱山+60%・工業+20%",rm:[1,1.6,1,1,1.2]},{n:"交易の隆盛",d:"港湾+60%・観光+20%",rm:[1,1,1.6,1.2,1]},{n:"観光ブーム",d:"観光地の収入+80%",rm:[1,1,1,1.8,1]},{n:"不況の世",d:"特産品の収入-30%",rm:[.7,.7,.7,.7,.7]}];
+const wmul=k=>{const w=WORLDS[S.world];return w&&w.rm?w.rm[k]:1};
+const genRes=()=>BL.map(()=>{if(Math.random()>.45)return -1;const r=Math.random()*12;return r<3?0:r<5?1:r<8?2:r<10?3:4});
+const resK=i=>S.res?S.res[i]:-1;
+const resV=i=>{const k=resK(i);return k>=0?RESB[k]/K*wmul(k):0};
+const resEq=n=>owned(n.id).reduce((s,i)=>{if(S.prov[i].u>0)return s;const k=resK(i);return k<0?s:s+(k===1?.25:k===4?.15:0)*wmul(k)},0)/K;
+const resTotal=n=>owned(n.id).reduce((s,i)=>s+(S.prov[i].u>0?0:resV(i)),0)*(n.hc||1);
+const resSum=n=>{const c=[0,0,0,0,0];owned(n.id).forEach(i=>{const k=resK(i);if(k>=0)c[k]++});return c.map((v,k)=>v?RESN[k]+v:"").filter(Boolean).join("・")||"なし"};
+const DEBTCAP=2000,DEBTR=.0015;
+const dlv=()=>S.dl===undefined?2:S.dl,MD=()=>MODES[S.mode]||MODES.normal;
 function newGame(pid){
- S={day:0,player:pid,log:[],rel:{},divs:[],nid:1,wars:[],cbs:[],wid:1,offers:[],diff:+($("#selDiff")?$("#selDiff").value:1)||1,
-  nations:P.map((p,i)=>({id:i,name:p[0],gold:800,army:Math.round(18+p[3]/30),tech:1,infra:1,tax:.25,ms:.3,fb:0,eq:Math.round((18+p[3]/30)*.3),ai:rnd(.2,.8),alive:true,cd:0,color:"#888"})),
+ const dv=$("#selDiff")?parseInt($("#selDiff").value):2,dl=Number.isFinite(dv)?Math.max(0,Math.min(4,dv)):2,mode=$("#selMode")&&MODES[$("#selMode").value]?$("#selMode").value:"normal",M=MODES[mode];
+ S={day:0,player:pid,log:[],rel:{},divs:[],nid:1,wars:[],cbs:[],wid:1,offers:[],diff:DIFFS[dl].ag*M.ag,dl,mode,uni:0,
+  nations:P.map((p,i)=>({id:i,name:p[0],gold:Math.round((800+(hcOf(p[3])-1)*600)*M.gold),hc:hcOf(p[3]),army:Math.round(armyOf(p[3])*M.army),tech:1,infra:1,tax:.25,ms:.3,fb:0,eq:Math.round(armyOf(p[3])*M.army*.3),ai:rnd(.2,.8),alive:true,cd:0,color:"#888"})),
   prov:BL.map((b,i)=>({owner:b[0],pop:BP[i]}))};
- assignColors();buildDB();S.nations.forEach(seedDivs);S.hist=[];recordHist();selD.clear();sel=CAPB[pid];view={z:1,x:0,y:0};logm("国家運営を開始した。"+P[pid][0]+"国の指導者として日本統一を目指せ。");
+ NDM=null;OPC.clear();S.seed=Math.floor(Math.random()*2147483647);S.res=genRes();S.world=Math.floor(Math.random()*WORLDS.length);S.diff*=WORLDS[S.world].ag||1;
+ S.prov.forEach((p,i)=>{p.pop=Math.round(p.pop*rnd(.92,1.12)*10)/10});
+ S.nations.forEach(n=>{if(n.id===pid)return;n.gold=Math.round(n.gold*rnd(.85,1.25));const a=rnd(.9,1.15);n.army=Math.round(n.army*a);n.eq=Math.round(n.eq*a);if(Math.random()<.2)n.tech=2;if(Math.random()<.3)n.pol=['rich','army','stab','diplo'][Math.floor(Math.random()*4)]});
+ assignColors();buildDB();S.nations.forEach(seedDivs);S.hist=[];recordHist();selD.clear();sel=CAPB[pid];view={z:1,x:0,y:0};logm("国家運営を開始した。"+P[pid][0]+"国の指導者として日本統一を目指せ。");logm(`今回の世情：${WORLDS[S.world].n}（${WORLDS[S.world].d}）`);
 }
 const me=()=>S.nations[S.player];
 const owned=id=>{const r=[];S.prov.forEach((p,i)=>{if(p.owner===id)r.push(i)});return r};
@@ -157,12 +240,13 @@ const key=(a,b)=>a<b?a+"-"+b:b+"-"+a;
 const R=(a,b)=>S.rel[key(a,b)]||(S.rel[key(a,b)]={war:false,ally:false,trade:false,since:0});
 const nPop=id=>owned(id).reduce((s,i)=>s+S.prov[i].pop,0);
 const eff=t=>t*(1-2*Math.max(0,t-.2));
-const blockInc=(n,i)=>(4/K+S.prov[i].pop*BE[i]*(.5+.1*n.infra)*eff(n.tax)*.05*(1+.05*n.tech))*(1+.12*(S.prov[i].dev||0));
-const upkeep=n=>n.army*.05*(n.pol==="rich"?1.25:n.pol==="army"?.8:1);
-function income(n){
+const blockInc=(n,i)=>(4/K+resV(i)+S.prov[i].pop*BE[i]*(.5+.1*n.infra)*eff(n.tax)*.05*(1+.05*n.tech))*(1+.12*(S.prov[i].dev||0))*(blockaded(i)?.6:1);
+const upkeep=n=>(n.army+(n.nav||0)*.6)*.05*(n.pol==="rich"?1.25:n.pol==="army"?.8:1);
+function income(n){const v=incomeRaw(n);return Number.isFinite(v)?v:0}
+function incomeRaw(n){
  let g=0;for(const i of owned(n.id)){if(S.prov[i].u>0)continue;g+=blockInc(n,i)}
- S.nations.forEach(o=>{if(o.alive&&o.id!==n.id&&R(n.id,o.id).trade)g+=n.pol==="diplo"?6:4});
- return g*(1+.6*(.3-msOf(n)))/(1+.06*(own(n.id)-1))*(n.pol==="rich"?1.15:n.pol==="army"?.92:1)-n.army*.05*(n.pol==="rich"?1.25:n.pol==="army"?.8:1);
+ S.nations.forEach(o=>{if(o.alive&&o.id!==n.id&&R(n.id,o.id).trade)g+=tradeVal(n.id,o.id)});g+=extraInc(n).t;
+ return g*(n.hc||1)*(1+.06*(n.com||0))*(1+.6*(.3-msOf(n)))/(1+.06*(own(n.id)-1))*(n.pol==="rich"?1.15:n.pol==="army"?.92:1)-(n.army+(n.nav||0)*.6)*.05*(n.pol==="rich"?1.25:n.pol==="army"?.8:1)-(n.debt||0)*DEBTR;
 }
 const pow=n=>nPop(n.id)/20+n.army*1.5+n.tech*15+n.infra*8+n.gold/50+own(n.id)*10;
 const alive=()=>S.nations.filter(n=>n.alive);
@@ -171,19 +255,70 @@ function enemyBorder(id){const s=new Set();owned(id).forEach(i=>ADJ[i].forEach(j
 const dateStr=()=>{const d=new Date(2030,3,1+S.day);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`};
 function logm(t){S.log.unshift({d:S.day?dateStr():"開始",t});if(S.log.length>100)S.log.pop()}
 let AP={war:1,lost:0,attack:0,rebel:0};try{Object.assign(AP,JSON.parse(localStorage.getItem("jp47_ap")||"{}"))}catch(e){}
+// ===== BGM（平時=和風／戦時=軍事風・WebAudio合成、小音量） =====
+const BGM=(()=>{let ctx=null,lv=1,mb,gP,gW,dl,mode="peace",nextT=0,st=0,idx=3,inited=0;const LV=[0,.5,1];
+ try{const v=localStorage.getItem("jp47_bgm");lv=v===null?1:+v;if(!(lv>=0&&lv<=2))lv=1}catch(e){lv=1}
+ function init(){if(inited)return true;const c=SFX.unlock();if(!c)return false;ctx=c;mb=c.createGain();mb.gain.value=.7*LV[lv];mb.connect(c.destination);
+  gP=c.createGain();gW=c.createGain();gW.gain.value=0;gP.connect(mb);gW.connect(mb);
+  dl=c.createDelay(1);dl.delayTime.value=.38;const fb=c.createGain(),lp=c.createBiquadFilter();fb.gain.value=.33;lp.type="lowpass";lp.frequency.value=2200;dl.connect(lp);lp.connect(fb);fb.connect(dl);lp.connect(gP);
+  nextT=c.currentTime+.1;inited=1;return true}
+ function nt(bus,f,t,d,type,v,att,fc,send){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+att);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  if(fc){const fl=ctx.createBiquadFilter();fl.type="lowpass";fl.frequency.value=fc;o.connect(fl);fl.connect(g)}else o.connect(g);g.connect(bus);if(send)g.connect(dl);o.start(t);o.stop(t+d+.05);return o}
+ function nz(bus,t,d,v,fc){const n=Math.floor(ctx.sampleRate*d),b=ctx.createBuffer(1,n,ctx.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);
+  const sr=ctx.createBufferSource();sr.buffer=b;const f=ctx.createBiquadFilter();f.type="bandpass";f.frequency.value=fc;const g=ctx.createGain();g.gain.value=v;sr.connect(f);f.connect(g);g.connect(bus);sr.start(t)}
+ const SC=[0,1,5,7,8],pf=k=>293.66*Math.pow(2,(SC[k%5]+12*Math.floor(k/5))/12),RT=[73.42,58.27,65.41,55],CH=[[146.8,174.6,220],[116.5,146.8,174.6],[130.8,164.8,196],[110,138.6,164.8]];
+ function pS(k,t){if(k%16===0)nt(gP,[73.42,55][(k>>4)&1],t,9,"sine",.05,2.5);
+  if(Math.random()<.55){idx=Math.max(0,Math.min(9,idx+[-2,-1,-1,0,1,1,2][Math.floor(Math.random()*7)]));const f=pf(idx);nt(gP,f,t,1.1,"triangle",.05,.006,2600,1);nt(gP,f*2,t,.5,"sine",.012,.004,0,1)}
+  if(k%16===8){const f=[587.3,440,392,466.2][Math.floor(Math.random()*4)],o=nt(gP,f,t,3.2,"sine",.035,.5,0,1),l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=5;lg.gain.value=f*.006;l.connect(lg);lg.connect(o.frequency);l.start(t);l.stop(t+3.3)}}
+ function wS(k,t){const bar=(k>>3)&3,r=RT[bar],s8=k&7;nt(gW,r,t,.26,"sawtooth",s8%4===0?.06:.04,.01,320);
+  if(s8%4===0){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.18);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(gW);o.start(t);o.stop(t+.25)}
+  if(s8===4)nz(gW,t,.12,.06,1800);if(s8&1)nz(gW,t,.04,.012,8000);
+  if(s8===0){CH[bar].forEach(f=>nt(gW,f,t,2.6,"sawtooth",.016,.35,900));nt(gW,r*4,t,1.2,"square",.02,.05,1100)}if(s8===6)nt(gW,r*6,t,.5,"square",.015,.03,1000)}
+ const want=()=>S&&S.wars&&S.wars.some(w=>w.a===S.player||w.b===S.player)?"war":"peace";
+ function tick(){if(!lv||!inited||ctx.state!=="running")return;const m=want();
+  if(m!==mode){mode=m;st=0;const n=ctx.currentTime;for(const g of[gP,gW]){g.gain.cancelScheduledValues(n);g.gain.setValueAtTime(g.gain.value,n)}gP.gain.linearRampToValueAtTime(m==="peace"?1:0,n+2);gW.gain.linearRampToValueAtTime(m==="war"?1:0,n+2);nextT=Math.max(nextT,n+.1)}
+  const dur=mode==="peace"?.55:.3;if(nextT<ctx.currentTime)nextT=ctx.currentTime+.05;while(nextT<ctx.currentTime+.7){(mode==="peace"?pS:wS)(st,nextT);nextT+=dur;st++}}
+ setInterval(tick,200);
+ document.addEventListener("visibilitychange",()=>{if(!inited)return;if(document.hidden)ctx.suspend();else ctx.resume()});
+ return{kick(){if(lv&&!inited)init();if(inited&&ctx.state==="suspended"&&!document.hidden)ctx.resume()},get lv(){return lv},
+  cycle(){lv=(lv+1)%3;try{localStorage.setItem("jp47_bgm",lv)}catch(e){}if(lv&&!inited)init();if(inited){mb.gain.cancelScheduledValues(ctx.currentTime);mb.gain.linearRampToValueAtTime(.7*LV[lv],ctx.currentTime+.4)}return lv}}})();
 const APN={war:"宣戦布告・参戦された時",lost:"自国の県が制圧された時",attack:"自国の県が攻撃された時",rebel:"反乱寸前になった時"};
-function ping(t,cat){toast(t,5500);if(S&&!S.log.some(e=>e.t===t&&e.d===dateStr()))logm(t);if(AP[cat]&&speed>0)speed=0}
+function ping(t,cat){SFX.mute(1);toast(t,5500);SFX.mute(0);SFX.play({war:"war",lost:"lost",attack:"attack",rebel:"rebel"}[cat]||"attack",700);if(S&&!S.log.some(e=>e.t===t&&e.d===dateStr()))logm(t);if(AP[cat]&&speed>0)speed=0}
 function renderAP(){$("#apBox").innerHTML=Object.keys(APN).map(k=>`<button data-ap="${k}">${APN[k]}に一時停止：${AP[k]?"ON":"OFF"}</button>`).join("")}
-function toast(t,ms){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),ms||2600)}
+function toast(t,ms){SFX.text(t);const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),ms||2600)}
 function say(a,t){if(a===S.player)toast(t);}
 
 // ===== 行動 =====
 const MAXLV=15,costInfra=n=>Math.round(200*Math.pow(1.3,n.infra-1)),costTech=n=>Math.round(300*Math.pow(1.3,n.tech-1));
 function doInfra(n){if(n.infra>=MAXLV||n.gold<costInfra(n))return false;n.gold-=costInfra(n);n.infra++;return true}
 function doTech(n){if(n.tech>=MAXLV||n.gold<costTech(n))return false;n.gold-=costTech(n);n.tech++;return true}
-function doRecruit(n,b){if(n.gold<15||(n.eq||0)<10)return false;const c=b!==undefined&&S.prov[b].owner===n.id?b:capOf(n.id);if(c<0)return false;n.gold-=15;n.eq-=10;addDiv(n.id,c,10);return true}
+const UT=[{n:"歩兵",k:"歩",g:15,e:10},{n:"機甲",k:"機",g:30,e:20},{n:"砲兵",k:"砲",g:25,e:15},{n:"山岳兵",k:"山",g:20,e:12},
+ {n:"駆逐艦隊",k:"駆",g:28,e:16,nv:1},{n:"戦艦",k:"戦",g:65,e:42,nv:1},{n:"輸送艦隊",k:"輸",g:36,e:14,nv:1}];
+// ===== 海軍 =====
+// 艦隊は港ブロックに配備され、海岸沿い・航路(NADJ)を移動する。領土は占領できないが、敵艦隊・港の守備隊と戦い、敵港を封鎖できる。
+const NV0=4,isNav=d=>(d.t||0)>=NV0;
+const NVM=[[1.1,1],[2.3,1.9],[.3,.3]];   // 艦種別の戦力係数[攻撃,防御]：駆逐／戦艦／輸送
+const NSUP=[.5,.9,1.2];                  // 護衛・輸送力（海を渡る陸軍の速度・上陸攻撃の不利を緩和）
+const NVSPD=[.75,1.1,.9];                // 航行日数の係数（小さいほど速い）
+function navSup(o,b){let s=0;for(const e of DB[b]||[]){if(!isNav(e)||!(e.str>.5))continue;if(e.o===o||R(o,e.o).ally)s+=NSUP[e.t-NV0]*Math.min(1,e.str/6)}return Math.min(3,s)}
+function navBomb(o,b){let s=0;for(const e of DB[b]||[]){if(!isNav(e)||!(e.str>.5)||(e.o!==o&&!R(o,e.o).ally))continue;s+=(e.t===5?1:e.t===4?.35:0)*Math.min(1,e.str/6)}return s}
+const seaK=d=>Math.max(1.1,2.2/(1+.4*navSup(d.o,d.b)));
+function blockaded(i){const a=DB[i];if(!a||!PORT[i])return false;const o=S.prov[i].owner;let en=false;for(const e of a){if(!isNav(e)||!(e.str>.5))continue;if(e.o===o)return false;if(R(e.o,o).war)en=true}return en}
+function portFor(n,b){if(b!==undefined&&S.prov[b].owner===n.id&&PORT[b])return b;const c=capOf(n.id);if(c>=0&&PORT[c])return c;let r=-1,m=-1;owned(n.id).forEach(i=>{if(PORT[i]&&S.prov[i].pop>m){m=S.prov[i].pop;r=i}});return r}
+function findNavPath(o,from,to){
+ if(from===to)return [];if(!canEnter(o,to))return null;
+ const dist=new Array(NB).fill(1e9),prev=new Array(NB).fill(-1),h=[];dist[from]=0;hPush(h,0,from);
+ while(h.length){const[m,u]=hPop(h);if(m>dist[u])continue;if(u===to)break;
+  for(const v of NADJ[u]){const q=S.prov[v].owner,w=((q===o||R(o,q).ally)?1:R(o,q).war?3:1.6)+Math.hypot(CEN[u][0]-CEN[v][0],CEN[u][1]-CEN[v][1])/60,nd=m+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u;hPush(h,nd,v)}}}
+ if(dist[to]>=1e9)return null;
+ const p=[];for(let c=to;c!==from;c=prev[c])p.push(c);return p.reverse()}
+const tmod=(d,def,X)=>{const t=d.t||0,tr=T[X];if(t===1)return def?.9:[1.35,1,.7,.85][tr];if(t===2)return def?.8:.75;if(t===3)return[.9,1.15,1.3,1][tr]*(def?1:.95);return 1};
+const aiType=n=>{const r=Math.random(),os=owned(n.id),m=os.filter(i=>T[i]>=1).length/Math.max(1,os.length);{const np=os.filter(i=>PORT[i]).length;if(np>=2&&n.army>12){const nv=S.divs.reduce((c,d)=>c+(d.o===n.id&&isNav(d)?1:0),0),cap=Math.min(8,1+Math.floor(np/3)),seaF=os.some(i=>ADJ[i].some(j=>isSea(i,j)&&S.prov[j].owner!==n.id&&R(n.id,S.prov[j].owner).war));
+  if(nv<cap&&Math.random()<(seaF?.22:.05)){const q=Math.random();return q<.45?4:q<.8?5:6}}}
+ return r<.14?1:r<.28?2:r<.3+.2*m?3:0};
+function doRecruit(n,b,t){t=t||0;const u=UT[t];if(n.gold<u.g||(n.eq||0)<u.e)return false;const c=u.nv?portFor(n,b):(b!==undefined&&S.prov[b].owner===n.id?b:capOf(n.id));if(c<0)return false;n.gold-=u.g;n.eq-=u.e;addDiv(n.id,c,10,t);return true}
 // ===== 開戦理由・戦争目標・講和 =====
-const CBCOST=40,CBDAYS=30,MAXGOAL=6;let DLG=null;
+const CBCOST=40,CBDAYS=30,MAXGOAL=6;let DLG=null,noReap=false;
 const blockVal=i=>clamp(Math.round(Math.sqrt(BP[i])*.6),2,12);
 const pairW=(w,a,b)=>(w.a===a&&w.b===b)||(w.a===b&&w.b===a);
 function newWar(a,b,goals,main){const w={id:S.wid++,a,b,goals:goals||[],ws:0,start:S.day,main:!!main};S.wars.push(w);return w}
@@ -191,14 +326,20 @@ function openWarRec(a,b,goals,main){S.wars=S.wars.filter(w=>!pairW(w,a,b));retur
 function getWar(a,b){return S.wars.find(w=>pairW(w,a,b))||newWar(a,b,[],false)}
 const wsOf=(w,id)=>id===w.a?w.ws:-w.ws;
 // 開戦理由：領土回復（自国の核領土を相手が持つ）／作成済み／国際的非難（悪名40超）
-function hasCB(a,b){
- if(owned(b).some(i=>BC[i]===a))return{t:"core",l:"領土回復"};
- const c=S.cbs.find(c=>c.a===a&&c.b===b&&c.ready);if(c)return{t:"fab",l:"開戦理由",d:c.exp-S.day};
- if((S.nations[b].infamy||0)>40)return{t:"inf",l:"国際的非難"};
- return null}
-function startCB(a,b){const A=S.nations[a];
- if(R(a,b).war||!neighbors(a).includes(b)||S.cbs.some(c=>c.a===a&&c.b===b)||A.gold<CBCOST){if(a===S.player)toast(A.gold<CBCOST?`開戦理由の作成には💰${CBCOST}が必要`:"開戦理由は作れない");return false}
- A.gold-=CBCOST;S.cbs.push({a,b,start:S.day,days:CBDAYS,ready:false});if(a===S.player)toast(`${S.nations[b].name}国への開戦理由を作成中（${CBDAYS}日）`);return true}
+const CBK={border:{l:"国境紛争",cost:30,days:20,exp:80,mx:4,inf:8},claim:{l:"領有権の主張",cost:70,days:45,exp:150,mx:6,inf:0}};
+function cbList(a,b){const B=S.nations[b],L=[],ob=owned(b);
+ if(ob.some(i=>BC[i]===a))L.push({t:"core",l:"領土回復",mx:MAXGOAL,inf:0});
+ const c=S.cbs.find(c=>c.a===a&&c.b===b&&c.ready);if(c){const k=CBK[c.k||"claim"];L.push({t:"fab",l:k.l,mx:k.mx,inf:k.inf,d:c.exp-S.day})}
+ const al=alliesOf(a),df=al.find(x=>R(x.id,b).war);if(df)L.push({t:"def",l:`同盟国防衛（${df.name}国）`,mx:5,inf:0});
+ const lb=al.find(x=>ob.some(i=>BC[i]===x.id));if(lb)L.push({t:"lib",l:`同盟国領の解放（${lb.name}国）`,mx:6,inf:0});
+ if((B.betray||0)>=2)L.push({t:"trai",l:"背信者の討伐",mx:5,inf:0});
+ if(ob.length>=12&&ob.length>owned(a).length*1.5)L.push({t:"heg",l:"覇権阻止",mx:6,inf:0});
+ if((B.infamy||0)>40)L.push({t:"inf",l:"国際的非難",mx:MAXGOAL,inf:0});
+ return L.sort((x,y)=>y.mx-x.mx||x.inf-y.inf)}
+function hasCB(a,b){return cbList(a,b)[0]||null}
+function startCB(a,b,k){const A=S.nations[a];k=CBK[k]?k:(Math.random()<.5?"border":"claim");const K_=CBK[k];
+ if(R(a,b).war||!neighbors(a).includes(b)||S.cbs.some(c=>c.a===a&&c.b===b)||A.gold<K_.cost){if(a===S.player)toast(A.gold<K_.cost?`${K_.l}の準備には💰${K_.cost}が必要`:"開戦理由は作れない");return false}
+ A.gold-=K_.cost;S.cbs.push({a,b,k,start:S.day,days:K_.days,ready:false});if(a===S.player)toast(`${S.nations[b].name}国への「${K_.l}」を準備中（${K_.days}日）`);return true}
 function goalCands(a,b){
  const d=new Array(NB).fill(-1),q=[];owned(a).forEach(i=>{d[i]=0;q.push(i)});
  for(let k=0;k<q.length;k++)for(const j of ADJ[q[k]])if(d[j]<0){d[j]=d[q[k]]+1;q.push(j)}
@@ -209,23 +350,23 @@ function declareWar(a,b,o){o=o||{};const r=R(a,b),A=S.nations[a],B=S.nations[b];
  if(r.war||!A.alive||!B.alive)return false;
  if(S.day<(r.truce||0)){say(a,`休戦中のため宣戦できない（あと${r.truce-S.day}日）`);return false}
  const cb=hasCB(a,b);if(!cb&&!o.free){say(a,"開戦理由がない");return false}
- if(cb){if(cb.t==="fab")S.cbs=S.cbs.filter(c=>!(c.a===a&&c.b===b))}else A.infamy=(A.infamy||0)+25;
- const goals=(o.goals||[]).filter(i=>S.prov[i].owner===b).slice(0,cb?MAXGOAL:3);
- if(r.ally){r.ally=false;A.betray=(A.betray||0)+1;logm(`${A.name}国が同盟国${B.name}国を裏切った！`)}
- r.war=true;r.trade=false;r.since=S.day;openWarRec(a,b,goals,true);
+ if(cb){if(cb.t==="fab")S.cbs=S.cbs.filter(c=>!(c.a===a&&c.b===b));if(cb.inf)A.infamy=(A.infamy||0)+cb.inf}else A.infamy=(A.infamy||0)+25;
+ const goals=(o.goals||[]).filter(i=>S.prov[i].owner===b).slice(0,cb?cb.mx:3);
+ if(r.ally){r.ally=false;r.noClose=1;A.betray=(A.betray||0)+1;logm(`${A.name}国が同盟国${B.name}国を裏切った！`)}
+ r.war=true;r.trade=false;r.since=S.day;warOp(a,b);openWarRec(a,b,goals,true);
  const pv=a===S.player||b===S.player;
- logm(`${A.name}国が${B.name}国に宣戦布告！${cb?"":"（無理由）"}${goals.length?"　戦争目標："+(pv?goals.map(i=>BN[i]).join("・"):goals.length+"か所"):""}`);
+ logm(`${A.name}国が${B.name}国に宣戦布告！${cb?`（${cb.l}）`:"（無理由）"}${goals.length?"　戦争目標："+(pv?goals.map(i=>BN[i]).join("・"):goals.length+"か所"):""}`);
  for(const x of S.nations){if(!x.alive||x.id===a||x.id===b)continue;
   const dA=R(x.id,b).ally&&!R(x.id,a).ally&&Math.random()<.5,aA=!dA&&R(x.id,a).ally&&!R(x.id,b).ally&&Math.random()<.3;
   if(!dA&&!aA)continue;const p=x.id,q=dA?a:b,rr=R(p,q);if(rr.war||S.day<(rr.truce||0))continue;
-  rr.war=true;rr.trade=false;rr.since=S.day;openWarRec(p,q,[],false);logm(`${x.name}国が参戦し${S.nations[q].name}国に宣戦した。`);separate(p,q);if(q===S.player)ping(`${x.name}国が参戦してきた！`,'war')}
+  rr.war=true;rr.trade=false;rr.since=S.day;warOp(p,q);openWarRec(p,q,[],false);logm(`${x.name}国が参戦し${S.nations[q].name}国に宣戦した。`);separate(p,q);if(q===S.player)ping(`${x.name}国が参戦してきた！`,'war')}
  if(b===S.player)ping(`${A.name}国があなたに宣戦布告！`,'war');else if(a===S.player)toast(`${B.name}国に宣戦布告した。`);
 for(const x of S.nations){if(x.alive&&x.id!==a&&x.id!==b&&R(a,x.id).ally&&R(x.id,b).ally)addTrust(a,x.id,-15)}
  separate(a,b);return true}
 // 講和：要求できるのは「敵の領土」と「今の戦争で占領した土地（要求しないと返還）」
 function demandCands(w,win){const lose=win===w.a?w.b:w.a,r=[];
  for(let i=0;i<NB;i++){const p=S.prov[i];if(p.owner===lose||(p.owner===win&&p.wid===w.id&&p.prev===lose))r.push(i)}return r}
-function demandCost(w,win,i){let c=blockVal(i);if(S.prov[i].owner!==win)c*=2;if(win===w.a&&w.goals.includes(i))c*=.6;if(BC[i]===win)c*=.5;return Math.max(1,Math.round(c*10)/10)}
+function demandCost(w,win,i){let c=blockVal(i);if(S.prov[i].owner!==win)c*=2;if(win===w.a&&w.goals.includes(i))c*=.6;if(BC[i]===win)c*=.5;{const lo=win===w.a?w.b:w.a;if(S.prov[i].owner===lo&&owned(lo).length<=1)c*=.5}return Math.max(1,Math.round(c*10)/10)}
 function autoDemands(w,win,budget){const ks=new Set(),gs=win===w.a?w.goals:[];let left=budget;
  const c=demandCands(w,win).map(i=>({i,c:demandCost(w,win,i),g:gs.includes(i)?0:S.prov[i].owner===win?1:2})).filter(x=>x.g<2).sort((x,y)=>x.g-y.g||x.c-y.c);
  for(const x of c)if(x.c<=left){ks.add(x.i);left-=x.c}
@@ -238,16 +379,17 @@ function signPeace(w,win,keep){
   const pr=p.prev;if(pr!==undefined&&S.nations[pr].alive&&p.owner!==pr&&(p.owner===w.a||p.owner===w.b)){p.owner=pr;p.u=0;p.ur=0;flash[i]=performance.now()}
   p.wid=undefined;p.prev=undefined}
  const kept=[...keep].filter(i=>S.prov[i].owner===win);
+ if(kept.length){const pay=Math.min(Math.round(L.gold*.4),30+kept.length*20);if(pay>0){L.gold-=pay;W.gold+=pay;logm(`${L.name}国が${W.name}国に賠償金💰${pay}を支払った。`)}}
  r.war=false;r.truce=S.day+60+(kept.length?30:0);S.wars=S.wars.filter(x=>x!==w);SDC={};expel();
  logm(`${W.name}国と${L.name}国が講和した${kept.length?`（${W.name}国が${kept.length}ブロックを確保）`:"（白紙和平）"}。`);
- if(win===S.player||lose===S.player)toast(kept.length?`講和が成立した（${W.name}国が${kept.length}ブロックを確保）`:"白紙和平が成立した")}
+ if(win===S.player||lose===S.player)toast(kept.length?`講和が成立した（${W.name}国が${kept.length}ブロックを確保）`:"白紙和平が成立した");if(!noReap)reapNations()}
 function makePeace(a,b){if(!R(a,b).war)return false;signPeace(getWar(a,b),a,new Set());return true}
 function tickWars(){
  S.wars=S.wars.filter(w=>S.nations[w.a].alive&&S.nations[w.b].alive&&R(w.a,w.b).war);
  const cnt=new Map();for(let i=0;i<NB;i++){const p=S.prov[i];if(p.wid!==undefined){const k=p.wid+":"+p.owner;cnt.set(k,(cnt.get(k)||0)+1)}}
  for(const w of S.wars){const d=clamp((cnt.get(w.id+":"+w.a)||0)-(cnt.get(w.id+":"+w.b)||0),-8,8);if(d)w.ws=clamp(w.ws+.05*d,-100,100)}
  S.cbs=S.cbs.filter(c=>S.nations[c.a].alive&&S.nations[c.b].alive&&!R(c.a,c.b).war&&(!c.ready||S.day<c.exp));
- for(const c of S.cbs)if(!c.ready&&S.day-c.start>=c.days){c.ready=true;c.exp=S.day+120;if(c.a===S.player)toast(`${S.nations[c.b].name}国への開戦理由が完成した`)}
+ for(const c of S.cbs)if(!c.ready&&S.day-c.start>=c.days){c.ready=true;c.exp=S.day+CBK[c.k||"claim"].exp;if(c.a===S.player)toast(`${S.nations[c.b].name}国への開戦理由が完成した`)}
  S.nations.forEach(n=>{if(n.infamy>0)n.infamy=Math.max(0,n.infamy-.04*(n.pol==="diplo"?4:1))})}
 // ===== AI：理由を作り、目標を決めて戦い、スコアで講和 =====
 function aiWar(n,o){const id=n.id;if(R(id,o).war||shareAlly(id,o))return;
@@ -255,7 +397,7 @@ function aiWar(n,o){const id=n.id;if(R(id,o).war||shareAlly(id,o))return;
  if(!S.cbs.some(c=>c.a===id&&c.b===o)&&S.cbs.filter(c=>c.a===id).length<2&&n.gold>=CBCOST+50&&neighbors(id).includes(o))startCB(id,o)}
 function aiPeace(n,w){const id=n.id,o=w.a===id?w.b:w.a,my=wsOf(w,id),d=S.day-w.start;if(o===S.player)return;
  const done=w.a===id&&w.goals.length>0&&w.goals.every(g=>S.prov[g].owner===id);
- if(my>=40&&(done||my>=70||d>120)&&Math.random()<.25){signPeace(w,id,autoDemands(w,id,my));return}
+ if(my>=40&&(done||my>=70||d>120)&&(owned(o).length>1||d>240)&&Math.random()<.25){signPeace(w,id,autoDemands(w,id,my));return}
  if(my<=-35&&Math.random()<.15){signPeace(w,o,autoDemands(w,o,-my));return}
  if(d>150&&Math.abs(my)<15&&Math.random()<.05){signPeace(w,id,new Set());return}
  if(d>240&&Math.random()<.03)signPeace(w,id,new Set())}
@@ -271,14 +413,14 @@ function renderDlg(){const el=$("#dlg"),bd=$("#dlgBody");
  if(!B.alive||(DLG.t==="war"&&R(S.player,DLG.b).war)||(DLG.t==="peace"&&!R(S.player,DLG.b).war)){closeDlg();return}
  el.classList.remove("hide");bd.innerHTML=DLG.t==="war"?warHTML(B):peaceHTML(B)}
 function warHTML(B){const a=S.player,A=S.nations[a],b=DLG.b,r=R(a,b),cb=hasCB(a,b),pc=S.cbs.find(c=>c.a===a&&c.b===b&&!c.ready),tr=(r.truce||0)-S.day;
- const mx=cb?MAXGOAL:3,sel=DLG.sel,
+ const mx=cb?cb.mx:3,sel=DLG.sel,
  rows=goalCands(a,b).map(i=>`<label class="row"><input type="checkbox" data-d="tog" data-i="${i}" ${sel.has(i)?"checked":""}> <div class="nm">${BN[i]} <span class="mu">人口${Math.round(S.prov[i].pop)}万</span>${BC[i]===a?'<span class="tag a">自国の核領土</span>':""}</div><span class="mu">価値${blockVal(i)}</span></label>`).join("");
  let st;
  if(tr>0)st=`<div class="card">休戦中（あと${tr}日）。宣戦できない。</div>`;
- else if(cb)st=`<div class="card"><b>開戦理由：${cb.l}</b>${cb.d?`<span class="mu">（有効あと${cb.d}日）</span>`:""}<div class="mu">戦争目標は最大${mx}か所。</div></div>`;
- else st=`<div class="card"><b>開戦理由がない</b><div class="mu">${pc?`作成中（あと${pc.days-(S.day-pc.start)}日）`:`作成に${CBDAYS}日・💰${CBCOST}`}。無理由で宣戦すると悪名+25（目標は最大3か所。悪名40超で外交を拒否され、全国に開戦理由を与える）。</div></div>`;
+ else if(cb)st=`<div class="card"><b>開戦理由：${cb.l}</b>${cb.d?`<span class="mu">（有効あと${cb.d}日）</span>`:""}<div class="mu">戦争目標は最大${mx}か所。${cb.inf?`宣戦すると悪名+${cb.inf}。`:""}</div>${cbList(a,b).length>1?`<div class="mu">他に使える理由：${cbList(a,b).filter(x=>x!==cb).map(x=>x.l).join("・")}</div>`:""}</div>`;
+ else st=`<div class="card"><b>開戦理由がない</b><div class="mu">${pc?`${CBK[pc.k||"claim"].l}を準備中（あと${pc.days-(S.day-pc.start)}日）`:"下のボタンで開戦理由を作れます（国境紛争＝安く速いが悪名+8／領有権の主張＝高く遅いが悪名なし）。"}無理由で宣戦すると悪名+25（目標は最大3か所。悪名40超で外交を拒否され、全国に開戦理由を与える）。同盟国と交戦中の国・12県超の覇権国・背信者・同盟国の核領土を持つ国には、最初から開戦理由があります。</div></div>`;
  return `<h2>宣戦布告：${B.name}国</h2>${st}<b>戦争目標（${sel.size}/${mx}）</b><div class="mu" style="font-size:12px">目標は講和で安く確保でき、占領するとスコアが1.5倍入る。</div>${rows||'<div class="mu">目標にできる領土がない</div>'}
- <div style="margin-top:8px">${tr>0?"":cb?'<button class="pri" data-d="war">宣戦布告</button>':(pc?"":`<button data-d="cb" ${A.gold<CBCOST?"disabled":""}>開戦理由を作る（💰${CBCOST}）</button>`)+'<button class="dg" data-d="free">無理由で宣戦（悪名+25）</button>'}<button data-d="close">キャンセル</button></div>`}
+ <div style="margin-top:8px">${tr>0?"":cb?'<button class="pri" data-d="war">宣戦布告</button>':(pc?"":Object.keys(CBK).map(k=>`<button data-d="cb" data-k="${k}" ${A.gold<CBK[k].cost?"disabled":""}>${CBK[k].l}（💰${CBK[k].cost}・${CBK[k].days}日${CBK[k].inf?`・悪名+${CBK[k].inf}`:""}）</button>`).join(""))+'<button class="dg" data-d="free">無理由で宣戦（悪名+25）</button>'}<button data-d="close">キャンセル</button></div>`}
 function peaceHTML(B){const a=S.player,b=DLG.b,w=getWar(a,b),my=wsOf(w,a),sel=DLG.sel;
  const bar=`<div class="bar"><i style="left:50%;width:${Math.max(0,my)/2}%;background:#4caf70"></i><i style="right:50%;width:${Math.max(0,-my)/2}%;background:#d9534f"></i><i style="left:50%;width:1px;background:#fff"></i></div>`;
  let body="";
@@ -297,9 +439,9 @@ function dlgClick(e){const t=e.target.closest("[data-d]");if(!t||!DLG)return;con
  if(k==="close"){closeDlg();return}
  if(k==="tog"){const i=+t.dataset.i;
   if(DLG.sel.has(i))DLG.sel.delete(i);
-  else{const mx=DLG.t==="war"?(hasCB(a,b)?MAXGOAL:3):99;if(DLG.sel.size>=mx){toast(`戦争目標は最大${mx}か所`);e.preventDefault();return}DLG.sel.add(i)}
+  else{const mx=DLG.t==="war"?(hasCB(a,b)||{mx:3}).mx:99;if(DLG.sel.size>=mx){toast(`戦争目標は最大${mx}か所`);e.preventDefault();return}DLG.sel.add(i)}
   renderDlg();return}
- if(k==="cb"){startCB(a,b);renderDlg();return}
+ if(k==="cb"){startCB(a,b,t.dataset.k);renderDlg();return}
  if(k==="war"||k==="free"){if(declareWar(a,b,{goals:[...DLG.sel],free:k==="free"}))closeDlg();else renderDlg();return}
  if(!R(a,b).war){closeDlg();return}
  const w=getWar(a,b),my=wsOf(w,a);
@@ -309,14 +451,51 @@ function dlgClick(e){const t=e.target.closest("[data-d]");if(!t||!DLG)return;con
 function drawGoals(lab){const p=S.player;
  for(const w of S.wars){if(w.a!==p&&w.b!==p)continue;const mine=w.a===p;
   for(const g of w.goals){const o=S.prov[g].owner;if(mine?o===w.b:o===p){const[x,y]=w2s(CEN[g][0],CEN[g][1]);lab(mine?"◎":"⚠",x,y-12,16)}}}}
-// ===== 同盟：信頼度・共同戦線・支援 =====
-const trustOf=(a,b)=>R(a,b).tr===undefined?50:R(a,b).tr;
-const addTrust=(a,b,v)=>{R(a,b).tr=clamp(trustOf(a,b)+v,0,100)};
+// ===== 同盟：印象度・共同戦線・支援 =====
+const seedH=(a,b)=>{let h=((S.seed||1)^(Math.min(a,b)*73856093)^(Math.max(a,b)*19349663))>>>0;h=Math.imul(h^(h>>>15),2246822519)>>>0;h=Math.imul(h^(h>>>13),3266489917)>>>0;return(h^(h>>>16))>>>0};
+const baseOp=(a,b)=>50+(seedH(a,b)%41-20);
+let OPC=new Map(),NDM=null,NDD=-99;
+const relOf=(x,y)=>S.rel[key(x,y)];
+function buildND(){const al=S.nations.filter(n=>n.alive).map(n=>n.id),nb={};al.forEach(i=>nb[i]=neighbors(i));NDM={};
+ for(const s0 of al){const d={[s0]:0},q=[s0];for(let k=0;k<q.length;k++){const u=q[k];for(const v of nb[u]||[]){if(d[v]===undefined){d[v]=d[u]+1;q.push(v)}}}NDM[s0]=d}NDD=Math.floor(S.day/10)}
+const ndist=(a,b)=>{if(!NDM||NDD!==Math.floor(S.day/10))buildND();const r=NDM[a];return r&&r[b]!==undefined?r[b]:99};
+const nearby=(id,k)=>S.nations.filter(o=>o.alive&&o.id!==id&&ndist(id,o.id)<=k).map(o=>o.id);
+// 印象度 = 50 + 各要素の合計（相性・距離・国力・悪名・関係・共通の友/敵・履歴）。aから見たbの印象
+function opBD(a,b){const A=S.nations[a],B=S.nations[b],r=relOf(a,b)||{},it=[];
+ const add=(l,v)=>{v=Math.round(v*10)/10;if(Math.abs(v)>=.5)it.push([l,v])};
+ add("相性",baseOp(a,b)-50);
+ const d=ndist(a,b);add(d===1?"隣接":d===2?"近隣":d>=5?"遠方":"距離",d===1?-5:d===2?3:d>=5?-2:0);
+ if(d<=2){const pa=pow(A),pb=pow(B);if(pb>pa*1.6)add("脅威",-6);else if(pb>pa*.7&&pb<pa*1.4)add("対等",2)}
+ add("大国警戒",-clamp((owned(b).length/NB*100-20)*.3,0,9));
+ add("悪名",-(B.infamy||0)*.25);
+ if(r.ally)add("同盟",14);if(r.trade)add("貿易",7);if(r.war)add("戦争",-35);
+ let fr=0,en=0,foe=0;
+ for(const z of S.nations){if(!z.alive||z.id===a||z.id===b)continue;const aa=isAlly(a,z.id),ab=isAlly(b,z.id),wa=!!(relOf(a,z.id)&&relOf(a,z.id).war),wb=!!(relOf(b,z.id)&&relOf(b,z.id).war);
+  if(aa&&ab)fr++;if(wa&&wb)en++;if((wa&&ab)||(wb&&aa))foe++}
+ add("共通の友",Math.min(2,fr)*3);add("共通の敵",Math.min(2,en)*3);add("敵の友",-Math.min(2,foe)*4);
+ add((r.h||0)>=0?"友誼":"因縁",r.h||0);
+ const sum=it.reduce((t,x)=>t+x[1],0);return{total:clamp(50+sum,0,100),items:it}}
+const trustOf=(a,b)=>{const k=a*64+b;let v=OPC.get(k);if(v===undefined){v=opBD(a,b).total;OPC.set(k,v)}return v};
+const opOf=trustOf;
+const addTrust=(a,b,v)=>{const r=R(a,b);r.h=clamp((r.h||0)+v,-60,60);OPC.clear()};
+const opLabel=v=>v>=80?"親愛":v>=65?"友好":v>=45?"中立":v>=25?"不信":"敵意";
+const opCol=v=>v>=65?"#6fd48a":v>=45?"#e0a030":v>=25?"#e88a4a":"#ff8d88";
+const isAlly=(x,y)=>{const r=relOf(x,y);return !!(r&&r.ally)};
+const wpick=(arr,w)=>{let t=w.reduce((a,b)=>a+b,0)*Math.random();for(let i=0;i<arr.length;i++){t-=w[i];if(t<=0)return arr[i]}return arr[arr.length-1]};
+function warOp(a,b){addTrust(a,b,-30);for(const z of S.nations){if(z.alive&&z.id!==a&&z.id!==b&&isAlly(z.id,b))addTrust(z.id,a,-12)}}
+function opinionTick(){OPC.clear();for(const k in S.rel){const r=S.rel[k];if(r.h===undefined)continue;if(r.ally||r.trade)r.h=Math.min(25,r.h+.05);else if(!r.war)r.h*=.985}}
 const alliesOf=id=>S.nations.filter(o=>o.alive&&o.id!==id&&R(id,o.id).ally);
-function mkAlly(a,b,tr){const r=R(a,b);r.ally=true;r.tr=tr||45}
+const ALMAX=6;
+function bloc(id){const st=new Set([id]),q=[id];for(let k=0;k<q.length;k++)for(const o of S.nations)if(o.alive&&!st.has(o.id)&&isAlly(q[k],o.id)){st.add(o.id);q.push(o.id)}return st}
+const blocFull=(a,b)=>new Set([...bloc(a),...bloc(b)]).size>ALMAX;
+function allyClosure(only){const seen=new Set(),pid=S.player;
+ for(const n of S.nations){if(!n.alive||seen.has(n.id)||(only!==undefined&&!bloc(only).has(n.id)))continue;const B=[...bloc(n.id)];B.forEach(x=>seen.add(x));
+  for(let i=0;i<B.length;i++)for(let j=i+1;j<B.length;j++){const x=B[i],y=B[j],r=R(x,y);if(r.ally||r.war||r.noClose||(r.truce&&S.day<r.truce+60))continue;
+   r.ally=true;r.h=Math.max(r.h||0,15);OPC.clear();logm(`${S.nations[x].name}国と${S.nations[y].name}国は、共通の同盟国を通じて同盟関係になった。`);if(x===pid||y===pid)toast(`${S.nations[x===pid?y:x].name}国と同盟関係になった（同盟国の同盟国）`)}}}
+function mkAlly(a,b,tr){const r=R(a,b);r.ally=true;r.noClose=0;r.h=Math.max(r.h||0,Math.max(0,(tr||45)-45));OPC.clear();allyClosure(a)}
 function joinWar(p,q){const rr=R(p,q),P_=S.nations[p],Q=S.nations[q];
  if(!P_.alive||!Q.alive||rr.war||rr.ally||S.day<(rr.truce||0))return false;
- rr.war=true;rr.trade=false;rr.since=S.day;openWarRec(p,q,[],false);
+ rr.war=true;rr.trade=false;rr.since=S.day;warOp(p,q);openWarRec(p,q,[],false);
  logm(`${P_.name}国が共同戦線に加わり、${Q.name}国に宣戦した。`);separate(p,q);
  if(q===S.player)ping(`${P_.name}国が参戦してきた！`,'war');else if(p===S.player)toast(`${Q.name}国との戦いに加わった。`);return true}
 function reqJoin(ally,enemy){const me_=S.player,A=S.nations[ally],E=S.nations[enemy],r=R(me_,ally);
@@ -325,7 +504,7 @@ function reqJoin(ally,enemy){const me_=S.player,A=S.nations[ally],E=S.nations[en
  if(R(ally,enemy).ally)return`${A.name}国は${E.name}国とも同盟しているため参戦できません`;
  if(S.day<(R(ally,enemy).truce||0))return"休戦中のため参戦できません";
  if(S.day-(r.reqT===undefined?-99:r.reqT)<30)return`要請は30日に1回までです（あと${30-(S.day-r.reqT)}日）`;
- const tr=trustOf(me_,ally);if(tr<25)return`信頼度が低すぎて要請を聞いてもらえない（${Math.round(tr)}/100）`;
+ const tr=trustOf(me_,ally);if(tr<25)return`印象度が低すぎて要請を聞いてもらえない（${Math.round(tr)}/100）`;
  r.reqT=S.day;
  const wars=S.nations.filter(o=>o.alive&&o.id!==ally&&R(ally,o.id).war).length,near=neighbors(ally).includes(enemy);
  if(A.army<8)return`${A.name}国は兵力が足りず断った`;
@@ -336,45 +515,78 @@ function acceptJoin(o){const p=S.player,e=o.e,E=S.nations[e];
  if(!E.alive||R(p,e).war){addTrust(p,o.f,3);return}
  if(R(p,e).ally){toast(`${E.name}国とも同盟しているため参戦できない`);return}
  if(S.day<(R(p,e).truce||0)){toast("休戦中のため参戦できない");return}
- if(joinWar(p,e)){addTrust(p,o.f,10);toast(`${S.nations[o.f].name}国と共に${E.name}国と戦う。信頼度が上がった`)}}
+ if(joinWar(p,e)){addTrust(p,o.f,10);toast(`${S.nations[o.f].name}国と共に${E.name}国と戦う。印象度が上がった`)}}
 function giveGold(n,o){if(!R(n.id,o).ally||n.gold<100)return false;n.gold-=100;S.nations[o].gold+=100;addTrust(n.id,o,4);return true}
 function giveEq(n,o){if(!R(n.id,o).ally||(n.eq||0)<20)return false;n.eq-=20;S.nations[o].eq=(S.nations[o].eq||0)+20;addTrust(n.id,o,3);return true}
 function askAid(n,o){const r=R(n.id,o),A=S.nations[o];if(!r.ally)return"同盟国ではありません";
  if(S.day-(r.aidT===undefined?-99:r.aidT)<60)return`援助要請は60日に1回までです（あと${60-(S.day-r.aidT)}日）`;
- r.aidT=S.day;if(trustOf(n.id,o)>=50&&A.gold>300){A.gold-=100;n.gold+=100;addTrust(n.id,o,-8);return`${A.name}国から💰100の援助を受けた（信頼度−8）`}
- addTrust(n.id,o,-3);return`${A.name}国に援助を断られた（信頼度50以上かつ相手の資金に余裕が必要）`}
+ r.aidT=S.day;if(trustOf(n.id,o)>=50&&A.gold>300){A.gold-=100;n.gold+=100;addTrust(n.id,o,-8);return`${A.name}国から💰100の援助を受けた（印象度−8）`}
+ addTrust(n.id,o,-3);return`${A.name}国に援助を断られた（印象度50以上かつ相手の資金に余裕が必要）`}
 function allyTick(){for(const k of Object.keys(S.rel)){const r=S.rel[k];if(!r.ally)continue;const[x,y]=k.split("-").map(Number),X=S.nations[x],Y=S.nations[y];
  if(!X.alive||!Y.alive||r.war){r.ally=false;continue}
- if(r.tr===undefined)r.tr=50;let common=0,conflict=0;
+ let common=0,conflict=0;
  for(const z of S.nations){if(!z.alive||z.id===x||z.id===y)continue;const wx=R(x,z.id).war,wy=R(y,z.id).war;if(wx&&wy)common++;else if((wx&&R(y,z.id).ally)||(wy&&R(x,z.id).ally))conflict++}
- r.tr=clamp(r.tr+.04+(common?.12:0)-(conflict?.25:0),0,100);
- if(r.tr<=0){r.ally=false;r.tr=undefined;logm(`${X.name}国と${Y.name}国の同盟が、信頼を失い解消された。`);expel();if(x===S.player||y===S.player)toast("同盟が信頼を失い解消された")}}}
+ r.h=clamp((r.h||0)+(common?.12:0)-(conflict?.25:0),-60,60);
+ if(trustOf(x,y)<=10){r.ally=false;r.noClose=1;r.h=-10;r.cdA=S.day+60;OPC.clear();logm(`${X.name}国と${Y.name}国の同盟が、印象の悪化で解消された。`);expel();if(x===S.player||y===S.player)toast("同盟が信頼を失い解消された")}}}
 const shareAlly=(a,b)=>S.nations.some(z=>z.alive&&z.id!==a&&z.id!==b&&R(a,z.id).ally&&R(b,z.id).ally);
 function mediate(x,y){const me_=S.player,r=R(x,y),X=S.nations[x],Y=S.nations[y];
  if(!R(me_,x).ally||!R(me_,y).ally)return"両国と同盟している必要があります";if(r.ally)return"すでに同盟しています";
  if(r.war||S.day<(r.truce||0))return"交戦中・休戦中のため仲介できません";
- if(allyCount(x)>=3||allyCount(y)>=3)return"同盟数の上限（3国）に達している国があります";
+ if(blocFull(x,y))return`同盟圏の上限（${ALMAX}国）を超えるため仲介できません`;
  if(S.day-(r.medT===undefined?-99:r.medT)<30)return`仲介は30日に1回までです（あと${30-(S.day-r.medT)}日）`;r.medT=S.day;
  const t=Math.min(trustOf(me_,x),trustOf(me_,y)),p=clamp(.25+t/130-((X.infamy||0)+(Y.infamy||0))/200,.1,.9);
  if(Math.random()<p){mkAlly(x,y,45);addTrust(me_,x,2);addTrust(me_,y,2);logm(`${S.nations[me_].name}国の仲介で${X.name}国と${Y.name}国が同盟を結んだ。`);return`仲介成功！${X.name}国と${Y.name}国が同盟した（三国同盟）`}
  return`仲介は不調だった（成功率${Math.round(p*100)}%）`}
 function allyCount(id){return S.nations.filter(o=>o.alive&&o.id!==id&&R(id,o.id).ally).length}
 function proposeAlly(a,b){const r=R(a,b),A=S.nations[a],B=S.nations[b];if(r.war||r.ally)return false;
- const ratio=pow(B)/pow(A);
- if((A.infamy||0)>40||allyCount(b)>=3||allyCount(a)>=3||ratio<.4||ratio>2.5||Math.random()<B.ai*.5||Math.random()<(A.betray||0)*.25){if(a===S.player)toast(B.name+"国は同盟を断った。");return false}
- mkAlly(a,b,40);logm(`${A.name}国と${B.name}国が同盟を結んだ。`);if(a===S.player||b===S.player)toast("同盟が成立した。");return true}
-function breakAlly(a,b){const r=R(a,b);if(!r.ally)return;r.ally=false;r.tr=undefined;logm(`${S.nations[a].name}国が${S.nations[b].name}国との同盟を破棄した。`);expel()}
+ if(S.day<(r.cdA||0)){if(a===S.player)toast(`同盟の再提案は、あと${r.cdA-S.day}日できません`);return false}
+ const op=opOf(b,a),ratio=pow(B)/pow(A);let why="";
+ if((A.infamy||0)>40)why="悪名が高い";else if(op<45)why="印象度が低い";else if(ndist(a,b)>3)why="距離が遠く利害が合わない";else if(blocFull(a,b))why="同盟圏が上限";else if(ratio<.4||ratio>2.5)why="国力差が大きい";
+ else if(Math.random()>clamp((op-40)/45,0,.95)*(1-B.ai*.25)||Math.random()<(A.betray||0)*.25)why="交渉が不調";
+ if(why){r.cdA=S.day+30;addTrust(a,b,-2);if(a===S.player)toast(`${B.name}国は同盟を断った（${why}／印象度${Math.round(op)}）。30日は再提案できません`,4000);return false}
+ mkAlly(a,b,Math.max(op,40));addTrust(a,b,5);logm(`${A.name}国と${B.name}国が同盟を結んだ。`);if(a===S.player||b===S.player)toast("同盟が成立した。");return true}
+function breakAlly(a,b){const r=R(a,b);if(!r.ally)return;r.ally=false;r.noClose=1;addTrust(a,b,-25);r.cdA=S.day+60;OPC.clear();logm(`${S.nations[a].name}国が${S.nations[b].name}国との同盟を破棄した。`);expel()}
 function proposeTrade(a,b){const r=R(a,b),B=S.nations[b];if(r.war||r.trade)return false;
- if((S.nations[a].infamy||0)>40||(B.ai>.75&&Math.random()<.5)){if(a===S.player)toast(B.name+"国は貿易協定を断った。");return false}
- r.trade=true;logm(`${S.nations[a].name}国と${B.name}国が貿易協定を結んだ。`);if(a===S.player||b===S.player)toast("貿易協定が成立した。");return true}
-function cutTrade(a,b){R(a,b).trade=false}
+ if(S.day<(r.cdT||0)){if(a===S.player)toast(`貿易の再提案は、あと${r.cdT-S.day}日できません`);return false}
+ {const tb=tradeBlock(a,b);if(tb){if(a===S.player)toast(`貿易できない：${tb}（貿易は隣国〜2国先の陸路か、両国に港がある海路のみ。枠にも上限あり）`,4000);return false}}
+ const op=opOf(b,a);let why="";
+ if((S.nations[a].infamy||0)>40)why="悪名が高い";else if(op<35)why="印象度が低い";else if(Math.random()>clamp((op-25)/40,.1,.95)*(B.ai>.75?.6:1))why="交渉が不調";
+ if(why){r.cdT=S.day+20;addTrust(a,b,-1);if(a===S.player)toast(`${B.name}国は貿易協定を断った（${why}／印象度${Math.round(op)}）。20日は再提案できません`,4000);return false}
+ r.trade=true;OPC.clear();addTrust(a,b,4);logm(`${S.nations[a].name}国と${B.name}国が貿易協定を結んだ。`);if(a===S.player||b===S.player)toast("貿易協定が成立した。");return true}
+// ===== 貿易：到達圏・貿易枠・相手ごとの収益 =====
+const TRSEA=7;
+const resKinds=id=>{const s=new Set();owned(id).forEach(i=>{const k=resK(i);if(k>=0)s.add(k)});return s};
+const portN=id=>owned(id).filter(i=>PORT[i]).length;
+const tradeCap=n=>Math.min(9,2+Math.floor(owned(n.id).length/3)+Math.min(2,Math.floor(portN(n.id)/2))+(n.pol==="diplo"?2:0));
+const tradeCount=id=>S.nations.filter(o=>o.alive&&o.id!==id&&R(id,o.id).trade).length;
+function tradeReach(a,b){const d=ndist(a,b);if(d<=2)return"陸路";if(portN(a)>0&&portN(b)>0&&d<=TRSEA)return"海路";return""}
+function tradeVal(a,b){const A=S.nations[a],ka=resKinds(a),comp=[...resKinds(b)].filter(k=>!ka.has(k)).length,sea=tradeReach(a,b)==="海路";
+ const v=1.5+comp*1.3+Math.min(3,own(b)*.25)+(isAlly(a,b)?1:0)+(ndist(a,b)===1?.8:0)-(sea?.5:0);return Math.max(1,v)*(A.pol==="diplo"?1.5:1)}
+function tradeBlock(a,b){const r=R(a,b);if(r.trade)return"";if(r.war)return"交戦中";
+ if(!tradeReach(a,b))return"通商路なし（遠方）";
+ if(tradeCount(a)>=tradeCap(S.nations[a]))return"自国の貿易枠が満杯";
+ if(tradeCount(b)>=tradeCap(S.nations[b]))return"相手の貿易枠が満杯";
+ if(alliesOf(a).some(x=>R(x.id,b).war)||alliesOf(b).some(x=>R(x.id,a).war))return"同盟国の敵";return""}
+function extraInc(n){let p=0,c=0;const tp=tradeCount(n.id);for(const i of owned(n.id)){if(S.prov[i].u>0||blockaded(i))continue;if(PORT[i]&&tp>0)p+=.6;if(T[i]===3)c+=.5}
+ const a=allyCount(n.id)*.8;return{p,c,a,t:p+c+a}}
+const costCom=n=>Math.round(150*Math.pow(1.5,n.com||0));
+function doCom(n){if((n.com||0)>=5||n.gold<costCom(n))return;n.gold-=costCom(n);n.com=(n.com||0)+1;toast(`商業振興 Lv${n.com}`)}
+function tradeTick(){const al=S.nations.filter(n=>n.alive),me_=S.player;
+ for(const a of al)for(const b of al){if(b.id<=a.id)continue;const r=relOf(a.id,b.id);if(!r||!r.trade)continue;
+  let why="";if(!tradeReach(a.id,b.id))why="通商路を失った";else if(alliesOf(a.id).some(x=>R(x.id,b.id).war)||alliesOf(b.id).some(x=>R(x.id,a.id).war))why="同盟国の敵との取引が問題化";else if(opOf(a.id,b.id)<20||opOf(b.id,a.id)<20)why="関係悪化";
+  if(why){r.trade=false;r.cdT=S.day+30;OPC.clear();if(a.id===me_||b.id===me_)toast(`${S.nations[a.id===me_?b.id:a.id].name}国との貿易協定が失効（${why}）`,3500)}}
+ for(const a of al){const cap=tradeCap(a),ps=al.filter(o=>o.id!==a.id&&R(a.id,o.id).trade);
+  if(ps.length>cap){ps.sort((x,y)=>tradeVal(a.id,x.id)-tradeVal(a.id,y.id));for(const o of ps.slice(0,ps.length-cap)){const r=R(a.id,o.id);r.trade=false;r.cdT=S.day+30;if(a.id===me_||o.id===me_)toast(`貿易枠の縮小で${S.nations[a.id===me_?o.id:a.id].name}国との貿易が終了`,3500)}}}
+ OPC.clear()}
+
+function cutTrade(a,b){const r=R(a,b);if(!r.trade)return;r.trade=false;addTrust(a,b,-8);r.cdT=S.day+40;OPC.clear()}
 function rebel(i){
  const o=S.prov[i].owner,core=BC[i],C=S.nations[core],O=S.nations[o];
  S.prov[i].owner=core;S.prov[i].u=0;S.prov[i].ur=0;S.prov[i].pop*=.9;flash[i]=performance.now();
  if(!C.alive){C.alive=true;C.gold=300;C.army=Math.round(15+P[core][3]/20);C.cd=0;C.tax=.25;C.infra=1;C.ms=.3;C.fb=0;C.eq=Math.round(C.army*.3);C.tech=Math.max(1,Math.floor(O.tech/2));seedDivs(C);
   for(const k of Object.keys(S.rel))if(k.split("-").includes(String(core)))delete S.rel[k]}
  const r=R(core,o);r.war=true;r.ally=r.trade=false;r.since=S.day;r.truce=0;{const w=getWar(core,o);if(w.a===core)w.ws=Math.max(w.ws,15)}S.prov[i].wid=undefined;S.prov[i].prev=undefined;
- const m=`${BN[i]}で反乱が発生！${C.name}国が${O.name}国から独立した。`;logm(m);
+ reapNations();const m=`${BN[i]}で反乱が発生！${C.name}国が${O.name}国から独立した。`;logm(m);
  if(o===S.player)ping(m,'rebel');else if(core===S.player)toast(m)
 }
 // 不穏度システム：占領地(核領土以外)のみ。0〜100、100で反乱。駐屯・慰撫・低税率・国策で抑えられる。
@@ -413,7 +625,7 @@ function rebellions(){
 function urStat(n){let max=0,hi=0,cnt=0,w=-1;for(const i of owned(n.id)){if(S.prov[i].owner===BC[i])continue;cnt++;const v=S.prov[i].ur||0;if(v>=UR_WARN)hi++;if(v>max){max=v;w=i}}return{max,hi,cnt,w}}
 function riskLabel(n){const u=urStat(n);return !u.cnt?"なし":u.max<35?"低":u.max<UR_WARN?"中":"高"}
 function events(){
- if(Math.random()>.03)return;const al=alive(),n=al[Math.floor(Math.random()*al.length)],o=owned(n.id),i=o[Math.floor(Math.random()*o.length)];if(!o.length)return;
+ if(Math.random()>.045)return;const al=alive(),n=al[Math.floor(Math.random()*al.length)],o=owned(n.id),i=o[Math.floor(Math.random()*o.length)];if(!o.length)return;
  const E=[()=>{S.prov[i].pop*=.93;n.gold-=Math.min(n.gold,80);return `${BN[i]}で大地震が発生。人口が減少した。`},
   ()=>{n.gold+=150+nPop(n.id)/5;return "豊作で税収が増えた。"},
   ()=>{o.forEach(j=>S.prov[j].pop*=.97);return "疫病が流行し人口が減少した。"},
@@ -425,54 +637,62 @@ function events(){
   ()=>{const q=o.filter(j=>S.prov[j].owner!==BC[j]);if(!q.length){n.eq=(n.eq||0)+15;return "鉱山で新たな鉱脈が見つかり、装備が増えた。"}const j=q[Math.floor(Math.random()*q.length)];S.prov[j].ur=Math.min(95,(S.prov[j].ur||0)+15);return `${BN[j]}で山賊が横行し、民心が乱れた。`},
   ()=>{n.eq=(n.eq||0)+20;return "刀鍛冶の名工が現れ、装備が増えた。"},
   ()=>{o.forEach(j=>S.prov[j].pop*=1.02);return "新田開発が進み、人口が増加した。"},
-  ()=>{const c=capOf(n.id);if(c<0)return "名将が現れた。";addDiv(n.id,c,10);return "名将が仕官し、精強な師団が編成された。"}];
+  ()=>{const c=capOf(n.id);if(c<0)return "名将が現れた。";addDiv(n.id,c,10);return "名将が仕官し、精強な師団が編成された。"},
+  ()=>{S.res[i]=1;return `${BN[i]}で金脈が見つかり、鉱山として開発された。`},
+  ()=>{S.res[i]=2;return `${BN[i]}の港が整備され、交易で賑わい始めた。`},
+  ()=>{S.res[i]=3;return `${BN[i]}が名勝として評判になり、観光客が訪れるようになった。`},
+  ()=>{const k=Math.round(120+o.length*20);n.gold+=k;return `好景気で商人が潤い、税収が増えた（💰+${k}）。`},
+  ()=>{o.forEach(j=>S.prov[j].pop*=.985);n.gold-=Math.min(Math.max(0,n.gold),100);return "大型の台風が直撃し、被害が出た。"}];
  const m=E[Math.floor(Math.random()*E.length)]();if(n.id===S.player){toast(m);logm(`${n.name}国：${m}`)}
 }
 // ===== 師団 =====
 function getSD(id){return SDC[id]||(SDC[id]=supDist(id))}
 function buildDB(){DB=BL.map(()=>[]);S.divs.forEach(d=>DB[d.b].push(d))}
 function place(d,b){const a=DB[d.b],k=a.indexOf(d);if(k>=0)a.splice(k,1);d.b=b;DB[b].push(d)}
-function addDiv(o,b,str){const d={id:S.nid++,o,b,str,path:[],prog:0,dig:0};S.divs.push(d);DB[b].push(d);S.nations[o].army+=str;return d}
+function addDiv(o,b,str,t){const d={id:S.nid++,o,b,str,path:[],prog:0,dig:0,t:t||0};S.divs.push(d);DB[b].push(d);S.nations[o].army+=str;if(d.t>=NV0)S.nations[o].nav=(S.nations[o].nav||0)+str;return d}
 function seedDivs(n){const tot=Math.max(0,n.army);n.army=0;if(tot<1)return;const bl=owned(n.id).sort((a,b)=>S.prov[b].pop-S.prov[a].pop);if(!bl.length)return;
  const nd=Math.max(1,Math.ceil(tot/10)),c=capOf(n.id);for(let k=0;k<nd;k++)addDiv(n.id,k===0&&c>=0?c:bl[k%bl.length],Math.min(10,tot/nd))}
-function syncArmy(){S.nations.forEach(n=>n.army=0);S.divs.forEach(d=>S.nations[d.o].army+=d.str)}
+function syncArmy(){S.nations.forEach(n=>{n.army=0;n.nav=0});S.divs.forEach(d=>{const v=d.str>0?d.str:0;S.nations[d.o].army+=v;if(isNav(d))S.nations[d.o].nav+=v})}
 const myDivs=id=>S.divs.filter(d=>d.o===id);
 const selDivs=()=>S.divs.filter(d=>selD.has(d.id)&&d.o===S.player);
-function reap(){if(!S.divs.some(d=>d.str<=.5))return;S.divs.forEach(d=>{if(d.str<=.5&&d.o===S.player&&S.nations[d.o].alive)logm(`第${d.id}師団が壊滅した（${BN[d.b]}）`)});S.divs=S.divs.filter(d=>d.str>.5);buildDB()}
+function reap(){if(!S.divs.some(d=>!(d.str>.5)))return;S.divs.forEach(d=>{if(d.str<=.5&&d.o===S.player&&S.nations[d.o].alive)logm(`第${d.id}${isNav(d)?"艦隊":"師団"}が壊滅した（${BN[d.b]}）`)});S.divs=S.divs.filter(d=>d.str>.5);buildDB()}
 // 補給：自領は首都からの距離、敵地は隣接する自領からの距離。隣接する自領が無ければ包囲（補給切れ）
 function supOf(d){const sd=getSD(d.o),o=S.prov[d.b].owner;
  if(o===d.o)return supF(sd[d.b]);
  if(R(d.o,o).ally)return .92;
- let m=-1;for(const j of ADJ[d.b])if(S.prov[j].owner===d.o&&sd[j]>=0&&(m<0||sd[j]<m))m=sd[j];
- return m<0?.4:supF(m+1)}
+ let m=-1;for(const j of (isNav(d)?NADJ:ADJ)[d.b])if(S.prov[j].owner===d.o&&sd[j]>=0&&(m<0||sd[j]<m))m=sd[j];
+ return m<0?(isNav(d)?.55:.4):supF(m+1)}
 function divPow(d,def,X){const n=S.nations[d.o];let p=d.str*(1+.1*n.tech)*supOf(d)*((n.eq||0)>0?1:def?.8:.7);
- if(def)p*=1.2*TD[T[X]]*(1+Math.min(2,.05*(own(d.o)-1)))*(1+Math.min(.3,(d.dig||0)*.015))*(S.prov[X].owner===d.o?1+.2*(S.prov[X].fort||0):1);else if(isSea(d.b,X))p*=.8;return p}
+ if(isNav(d))return p*NVM[d.t-NV0][def?1:0]*(def&&S.prov[X].owner===d.o?1+.1*(S.prov[X].fort||0):1);
+ if(def)p*=1.2*TD[T[X]]*(1+Math.min(2,.05*(own(d.o)-1)))*(1+Math.min(.3,(d.dig||0)*.015))*(S.prov[X].owner===d.o?1+.2*(S.prov[X].fort||0):1);else if(isSea(d.b,X))p*=Math.min(1,.8+.1*navSup(d.o,d.b));return p*tmod(d,def,X)}
 function canEnter(o,b){const q=S.prov[b].owner;return q===o||R(o,q).ally||R(o,q).war}
+function hPush(h,k,v){h.push([k,v]);let i=h.length-1;while(i>0){const p=(i-1)>>1;if(h[p][0]<=h[i][0])break;const t=h[p];h[p]=h[i];h[i]=t;i=p}}
+function hPop(h){const t=h[0],l=h.pop();if(h.length){h[0]=l;let i=0;for(;;){const a=2*i+1,b=a+1;let m=i;if(a<h.length&&h[a][0]<h[m][0])m=a;if(b<h.length&&h[b][0]<h[m][0])m=b;if(m===i)break;const x=h[m];h[m]=h[i];h[i]=x;i=m}}return t}
 function findPath(o,from,to){
  if(from===to)return [];
- const dist=new Array(NB).fill(1e9),prev=new Array(NB).fill(-1),done=new Array(NB).fill(false);dist[from]=0;
- for(;;){let u=-1,m=1e9;for(let i=0;i<NB;i++)if(!done[i]&&dist[i]<m){m=dist[i];u=i}
-  if(u<0||u===to)break;done[u]=true;
-  for(const v of ADJ[u]){if(done[v]||!canEnter(o,v))continue;const q=S.prov[v].owner,w=((q===o||R(o,q).ally)?1:3+TD[T[v]])+(isSea(u,v)?2:0),nd=m+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u}}}
+ const dist=new Array(NB).fill(1e9),prev=new Array(NB).fill(-1),h=[];dist[from]=0;hPush(h,0,from);
+ while(h.length){const[m,u]=hPop(h);if(m>dist[u])continue;if(u===to)break;
+  for(const v of ADJ[u]){if(!canEnter(o,v))continue;const q=S.prov[v].owner,w=((q===o||R(o,q).ally)?1:3+TD[T[v]])+(isSea(u,v)?2:0),nd=m+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u;hPush(h,nd,v)}}}
  if(dist[to]>=1e9)return null;
  const p=[];for(let c=to;c!==from;c=prev[c])p.push(c);return p.reverse()}
-function orderDivs(ds,X,auto){let ok=0,fail=0;for(const d of ds){const p=findPath(d.o,d.b,X);if(p===null){fail++;continue}d.path=p;d.prog=0;d.dig=0;ok++;if(!auto&&d.o===S.player){d.man=true;d.camp=undefined;d.gar=undefined}}return[ok,fail]}
+function orderDivs(ds,X,auto){let ok=0,fail=0;for(const d of ds){const p=isNav(d)?(PORT[X]?findNavPath(d.o,d.b,X):null):findPath(d.o,d.b,X);if(p===null){fail++;continue}d.path=p;d.prog=0;d.dig=0;ok++;if(!auto&&d.o===S.player){d.man=true;d.camp=undefined;d.gar=undefined}}return[ok,fail]}
 // ---- 自動管理：前線展開・自動攻略・自動駐屯 ----
 const isOccup=i=>S.prov[i].owner!==BC[i];
 function frontBlocks(id){const m=new Map();for(const i of owned(id))for(const j of ADJ[i]){const o=S.prov[j].owner;if(o===id||R(id,o).ally)continue;const w=R(id,o).war?3:1;m.set(i,(m.get(i)||0)+w)}
  const war=[...m].filter(([i])=>ADJ[i].some(j=>R(id,S.prov[j].owner).war&&S.prov[j].owner!==id));return war.length?war:[...m]}
-function deployFront(ds){const n=me(),fb=frontBlocks(n.id);if(!fb.length)return[0,0];const tot=fb.reduce((t,[,w])=>t+w,0),need=fb.map(([i,w])=>({i,q:w/tot*ds.length,c:0}));let ok=0,fail=0;
+function deployFront(ds){ds=ds.filter(d=>!isNav(d));const n=me(),fb=frontBlocks(n.id);if(!fb.length)return[0,0];const tot=fb.reduce((t,[,w])=>t+w,0),need=fb.map(([i,w])=>({i,q:w/tot*ds.length,c:0}));let ok=0,fail=0;
  for(const d of ds){need.sort((a,b)=>(a.c/(a.q||1))-(b.c/(b.q||1)));const t=need[0];t.c++;const[o,f]=orderDivs([d],t.i,true);if(o){ok++;d.man=true;d.camp=undefined;d.gar=undefined}else fail++}return[ok,fail]}
-function distFrom(o,from){const dist=new Array(NB).fill(1e9),done=new Array(NB).fill(false);dist[from]=0;
- for(;;){let u=-1,m=1e9;for(let i=0;i<NB;i++)if(!done[i]&&dist[i]<m){m=dist[i];u=i}if(u<0)break;done[u]=true;
-  for(const v of ADJ[u]){if(done[v]||!canEnter(o,v))continue;const q=S.prov[v].owner,nd=m+((q===o||R(o,q).ally)?1:3+TD[T[v]])+(isSea(u,v)?2:0);if(nd<dist[v])dist[v]=nd}}return dist}
+function distFrom(o,from){const dist=new Array(NB).fill(1e9),h=[];dist[from]=0;hPush(h,0,from);
+ while(h.length){const[m,u]=hPop(h);if(m>dist[u])continue;
+  for(const v of ADJ[u]){if(!canEnter(o,v))continue;const q=S.prov[v].owner,nd=m+((q===o||R(o,q).ally)?1:3+TD[T[v]])+(isSea(u,v)?2:0);if(nd<dist[v]){dist[v]=nd;hPush(h,nd,v)}}}
+ return dist}
 function borderBlocks(id){const r=[];for(const i of owned(id))if(ADJ[i].some(j=>{const o=S.prov[j].owner;return o!==id&&!R(id,o).ally}))r.push(i);return r}
-function deployBorder(ds){const n=me(),bb=borderBlocks(n.id);if(!bb.length)return[0,0];const cnt={};bb.forEach(i=>cnt[i]=0);
+function deployBorder(ds){ds=ds.filter(d=>!isNav(d));const n=me(),bb=borderBlocks(n.id);if(!bb.length)return[0,0];const cnt={};bb.forEach(i=>cnt[i]=0);
  const ready=ds.filter(d=>d.str>=1).sort((a,b)=>a.id-b.id);let ok=0,fail=0;
  for(const d of ready){const dist=distFrom(d.o,d.b);let best=-1,bs=1e18;for(const i of bb){if(dist[i]>=1e9)continue;const sc=cnt[i]*1000+dist[i];if(sc<bs){bs=sc;best=i}}
   if(best<0){fail++;continue}cnt[best]++;if(best===d.b){d.path=[];d.prog=0;ok++}else{const[o]=orderDivs([d],best,true);o?ok++:fail++}d.man=true;d.camp=undefined;d.gar=undefined}
  return[ok,fail]}
-function spreadDivs(ds,auto){const pid=S.player,occ={};S.divs.forEach(d=>{if(d.o!==pid)return;const t=d.path.length?d.path[d.path.length-1]:d.b;occ[t]=(occ[t]||0)+1});
+function spreadDivs(ds,auto){ds=ds.filter(d=>!isNav(d));const pid=S.player,occ={};S.divs.forEach(d=>{if(d.o!==pid)return;const t=d.path.length?d.path[d.path.length-1]:d.b;occ[t]=(occ[t]||0)+1});
  const grp={};ds.forEach(d=>{if(d.path.length&&!auto)return;(grp[d.b]=grp[d.b]||[]).push(d)});let moved=0;
  for(const b in grp){const l=grp[b].sort((x,y)=>y.str-x.str);if(l.length<2&&(occ[b]||0)<2)continue;
   const keep=(occ[b]||0)-l.length<1?1:0;
@@ -482,8 +702,15 @@ function spreadDivs(ds,auto){const pid=S.player,occ={};S.divs.forEach(d=>{if(d.o
    if(best<0||(occ[best]||0)>=(occ[d.b]||0)-1)continue;
    const[o]=orderDivs([d],best,true);if(o){occ[d.b]--;occ[best]=(occ[best]||0)+1;moved++;if(!auto){d.man=true;d.camp=undefined;d.gar=undefined}}}}
  return moved}
-function autoSpread(){const n=me();if(!n.alive||!n.sp)return;const ds=S.divs.filter(d=>d.o===S.player&&!d.path.length&&!d.man&&d.camp===undefined&&d.gar===undefined&&d.str>=1&&S.prov[d.b].owner===S.player&&!DB[d.b].some(e=>e.o!==S.player&&R(S.player,e.o).war));spreadDivs(ds,true)}
-function setCamp(ds,nid){ds.forEach(d=>{d.camp=nid;d.man=false;d.gar=undefined;d.path=[];d.prog=0});return ds.length}
+function splitDivs(ds){ds=ds.filter(d=>!isNav(d));const pid=S.player;let c=0;
+ for(const d of ds){if(d.str<2||d.path.length)continue;
+  const cand=ADJ[d.b].filter(j=>S.prov[j].owner===pid&&canEnter(pid,j)&&!DB[j].some(e=>e.o!==pid&&R(pid,e.o).war)).map(j=>[j,DB[j].filter(e=>e.o===pid).length+Math.random()*.5]).sort((a,b)=>a[1]-b[1]);
+  let tgt=-1,p=null;for(const[j]of cand){p=findPath(pid,d.b,j);if(p){tgt=j;break}}
+  if(tgt<0)continue;
+  const h=d.str/2;d.str=h;const nd=addDiv(pid,d.b,h,d.t);nd.path=p;nd.prog=0;nd.man=true;selD.add(nd.id);c++}
+ return c}
+function autoSpread(){const n=me();if(!n.alive||!n.sp)return;const ds=S.divs.filter(d=>d.o===S.player&&!isNav(d)&&!d.path.length&&!d.man&&d.camp===undefined&&d.gar===undefined&&d.str>=1&&S.prov[d.b].owner===S.player&&!DB[d.b].some(e=>e.o!==S.player&&R(S.player,e.o).war));spreadDivs(ds,true)}
+function setCamp(ds,nid){ds=ds.filter(d=>!isNav(d));ds.forEach(d=>{d.camp=nid;d.man=false;d.gar=undefined;d.path=[];d.prog=0});return ds.length}
 function autoCamp(){
  const pid=S.player;for(const d of S.divs){if(d.o!==pid||d.camp===undefined)continue;
   const c=S.nations[d.camp];if(!c.alive||!R(pid,d.camp).war){d.camp=undefined;continue}
@@ -501,28 +728,45 @@ function autoGarrison(){
  const n=me();if(!n.alive||!n.ag)return;const pid=S.player;
  S.divs.forEach(d=>{if(d.o===pid&&d.gar!==undefined&&(S.prov[d.gar].owner!==pid||!isOccup(d.gar)))d.gar=undefined});
  const need=owned(pid).filter(i=>isOccup(i)&&!DB[i].some(e=>e.o!==pid&&R(pid,e.o).war)).sort((a,b)=>(S.prov[b].ur||0)-(S.prov[a].ur||0));
- const free=S.divs.filter(d=>d.o===pid&&d.str>=3&&!d.path.length&&d.camp===undefined&&d.gar===undefined&&!d.man&&S.prov[d.b].owner===pid&&!isOccup(d.b));
+ const free=S.divs.filter(d=>d.o===pid&&!isNav(d)&&d.str>=3&&!d.path.length&&d.camp===undefined&&d.gar===undefined&&!d.man&&S.prov[d.b].owner===pid&&!isOccup(d.b));
  for(const X of need){
-  const here=DB[X].find(d=>d.o===pid&&d.str>=2&&d.gar===undefined&&!d.man);
+  const here=DB[X].find(d=>d.o===pid&&!isNav(d)&&d.str>=2&&d.gar===undefined&&!d.man);
   if(DB[X].some(d=>d.o===pid&&d.str>=2&&(d.gar===X||d.man)))continue;
   if(here){here.gar=X;continue}
   if(!free.length)break;
-  let bi=-1,bl=1e9;free.forEach((d,k)=>{const p=findPath(pid,d.b,X);if(p&&p.length<bl){bl=p.length;bi=k}});
-  if(bi<0)continue;const d=free.splice(bi,1)[0];if(orderDivs([d],X,true)[0])d.gar=X}}
-function nearestOwn(d){const seen=new Set([d.b]),q=[d.b];for(let k=0;k<q.length;k++)for(const j of ADJ[q[k]]){if(seen.has(j))continue;seen.add(j);if(S.prov[j].owner===d.o)return j;q.push(j)}return -1}
-function recall(d){if(S.prov[d.b].owner===d.o){d.path=[];d.prog=0;return}const t=nearestOwn(d);if(t>=0){d.path=findPath(d.o,d.b,t)||[];d.prog=0}}
+  let bi=-1,bl=1e9;const dX=distFrom(pid,X);free.forEach((d,k)=>{const v=dX[d.b];if(v<bl){bl=v;bi=k}});
+  if(bi<0||bl>=1e9)continue;const d=free.splice(bi,1)[0];if(orderDivs([d],X,true)[0])d.gar=X}}
+function nearestOwn(d){const AA=isNav(d)?NADJ:ADJ,seen=new Set([d.b]),q=[d.b];for(let k=0;k<q.length;k++)for(const j of AA[q[k]]){if(seen.has(j))continue;seen.add(j);if(S.prov[j].owner===d.o)return j;q.push(j)}return -1}
+function recall(d){if(S.prov[d.b].owner===d.o){d.path=[];d.prog=0;return}const t=nearestOwn(d);if(t>=0){d.path=(isNav(d)?findNavPath:findPath)(d.o,d.b,t)||[];d.prog=0}}
 function sendHome(d){d.path=[];d.prog=0;const t=nearestOwn(d);if(t>=0)place(d,t)}
 function separate(a,b){S.divs.forEach(d=>{if(d.o!==a&&d.o!==b)return;const x=d.o===a?b:a;if(!DB[d.b].some(e=>e.o===x))return;if(S.prov[d.b].owner===d.o)return;sendHome(d)})}
-function expel(){for(const d of S.divs){const o=S.prov[d.b].owner;if(o!==d.o){const r=R(d.o,o);if(!r.ally&&!r.war)sendHome(d)}}}
+function expel(){for(const d of S.divs){if(isNav(d)&&d.path.length)continue;const o=S.prov[d.b].owner;if(o!==d.o){const r=R(d.o,o);if(!r.ally&&!r.war)sendHome(d)}}}
+function killNation(id,msg){const B=S.nations[id];if(!B.alive)return;B.alive=false;B.gold=0;B.army=0;
+ S.divs.forEach(e=>{if(e.o===id)e.str=0});
+ S.nations.forEach(x=>{const rr=S.rel[key(id,x.id)];if(rr)rr.war=rr.ally=rr.trade=false});
+ S.wars=S.wars.filter(w=>w.a!==id&&w.b!==id);S.cbs=S.cbs.filter(c=>c.a!==id&&c.b!==id);S.offers=S.offers.filter(o=>o.f!==id&&o.e!==id);
+ for(const p of S.prov)if(p.prev===id){p.wid=undefined;p.prev=undefined}
+ selD.forEach(i=>{if(!S.divs.some(d=>d.id===i&&d.str>.5))selD.delete(i)});
+ SDC={};reap();syncArmy();
+ logm(msg||`${B.name}国が滅亡した。`);if(id===S.player)toast("あなたの国は滅亡した…");
+ const al=alive();if(al.length===1)logm(`日本統一！ ${al[0].name}国が47都道府県を支配した。`)}
+// 領土が0になった国は、どんな経路（講和・反乱・占領）でも必ずここで滅亡させる
+function reapNations(){const cnt=new Array(S.nations.length).fill(0);for(const p of S.prov)cnt[p.owner]++;
+ S.nations.forEach((n,i)=>{if(n.alive&&cnt[i]===0)killNation(i)})}
+function fixNaN(){const f=(o,k,v)=>{if(!Number.isFinite(o[k]))o[k]=v};
+ for(const n of S.nations){f(n,'gold',0);f(n,'eq',0);f(n,'army',0);f(n,'tax',.25);f(n,'ms',.3);f(n,'tech',1);f(n,'infra',1);f(n,'fb',0);f(n,'hc',1);if(n.infamy!==undefined)f(n,'infamy',0)}
+ S.prov.forEach((p,i)=>{f(p,'pop',BP[i]);for(const k of['u','ur','dev','fort'])if(p[k]!==undefined)f(p,k,0)});
+ for(const d of S.divs){if(!Number.isFinite(d.str))d.str=0;f(d,'prog',0);f(d,'dig',0)}
+ for(const w of S.wars)f(w,'ws',0);
+ for(const k in S.rel)if(S.rel[k].h!==undefined)f(S.rel[k],'h',0);
+ reap()}
 function annex(w,win){const lose=win===w.a?w.b:w.a,A=S.nations[win],B=S.nations[lose];
- signPeace(w,win,new Set(owned(lose)));
- if(!owned(lose).length){B.alive=false;S.divs.forEach(e=>{if(e.o===lose)e.str=0});S.nations.forEach(x=>{const rr=S.rel[key(lose,x.id)];if(rr)rr.war=rr.ally=rr.trade=false});
-  logm(`${A.name}国が講和会議で${B.name}国を併合した。`);if(win===S.player)toast(`講和会議で${B.name}国を併合した！`);reap();syncArmy();SDC={};
-  if(alive().length===1)logm(`日本統一！ ${A.name}国が47都道府県を支配した。`)}}
+ noReap=true;signPeace(w,win,new Set(owned(lose)));noReap=false;
+ if(!owned(lose).length){killNation(lose,`${A.name}国が講和会議で${B.name}国を併合した。`);if(win===S.player)toast(`講和会議で${B.name}国を併合した！`)}else reapNations()}
 function checkAnnex(){const c=[];
  for(const w of S.wars){for(const win of [w.a,w.b]){const lose=win===w.a?w.b:w.a,W=S.nations[win],L=S.nations[lose];
    if(!W.alive||!L.alive||lose===S.player||owned(lose).length!==1)continue;
-   if(W.army<Math.max(3,L.army*3))continue;if(S.day-Math.max(w.start,w.lastCap||0)<20)continue;c.push([w,win]);break}}
+   if(W.army<Math.max(3,L.army*2)&&wsOf(w,win)<50)continue;if(S.day-Math.max(w.start,w.lastCap||0)<10)continue;c.push([w,win]);break}}
  for(const[w,win]of c)if(S.wars.includes(w)&&R(w.a,w.b).war)annex(w,win)}
 function capture(d,X,q){
  const A=S.nations[d.o],B=S.nations[q],w=getWar(d.o,q),pX=S.prov[X],wasCap=capOf(q)===X;w.lastCap=S.day;
@@ -532,14 +776,11 @@ function capture(d,X,q){
  const loot=Math.max(0,B.gold*.1);B.gold-=loot;A.gold+=loot;
  logm(`${A.name}国が${B.name}国の${BN[X]}を制圧した。`);
  if(q===S.player)ping(`${BN[X]}が${A.name}国に制圧された！`,'lost');else if(d.o===S.player)toast(`${BN[X]}を制圧した！`);
- if(!owned(q).length){B.alive=false;S.divs.forEach(e=>{if(e.o===q)e.str=0});
-  S.nations.forEach(x=>{const rr=S.rel[key(q,x.id)];if(rr)rr.war=rr.ally=rr.trade=false});
-  logm(`${B.name}国が滅亡した。`);if(q===S.player)toast("あなたの国は滅亡した…");
-  if(alive().length===1)logm(`日本統一！ ${A.name}国が47都道府県を支配した。`)}}
+ if(!owned(q).length)killNation(q)}
 function stepDivs(){
  BT.clear();SDC={};
  for(const d of S.divs){if(!d.path.length)continue;const nx=d.path[0],q=S.prov[nx].owner;
-  if(!ADJ[d.b].includes(nx)||(q!==d.o&&!R(d.o,q).ally&&!R(d.o,q).war)){d.path=[];d.prog=0}}
+  if(!(isNav(d)?NADJ:ADJ)[d.b].includes(nx)||(!isNav(d)&&q!==d.o&&!R(d.o,q).ally&&!R(d.o,q).war)){d.path=[];d.prog=0}}
  // 1) 戦闘：敵師団がいるブロックへ命令を受けた部隊が攻撃側
  const bt=new Map();
  for(const d of S.divs){if(!d.path.length)continue;const X=d.path[0];
@@ -547,18 +788,21 @@ function stepDivs(){
  for(const [X,atkAll] of bt){
   const on=new Set(atkAll.map(d=>d.o)),defAll=DB[X].filter(e=>[...on].some(o=>o!==e.o&&R(o,e.o).war)),atk=atkAll.filter(d=>defAll.some(e=>R(d.o,e.o).war));
   if(!atk.length||!defAll.length)continue;
-  const top=a=>[...a].sort((x,y)=>y.str-x.str).slice(0,6),A=top(atk),D=top(defAll);
+  const top=a=>[...a].filter(d=>d.str>.5).sort((x,y)=>y.str-x.str).slice(0,6),A=top(atk),D=top(defAll);
+  if(!A.length||!D.length)continue;
   const jf=a=>{const os=[...new Set(a.map(d=>d.o))];return os.length>1&&os.some((x,i)=>os.some((y,j)=>j>i&&R(x,y).ally))?1.12:1};
-  const pa=A.reduce((t,d)=>t+divPow(d,false,X),0)*rnd(.85,1.15)*jf(A),pd=D.reduce((t,d)=>t+divPow(d,true,X),0)*rnd(.85,1.15)*jf(D);
+  let pa=A.reduce((t,d)=>t+divPow(d,false,X),0)*rnd(.85,1.15)*jf(A),pd=D.reduce((t,d)=>t+divPow(d,true,X),0)*rnd(.85,1.15)*jf(D);
+  {const art=Math.min(3,A.filter(d=>d.t===2).length);pa*=1+.1*art;if(art&&(T[X]===3||(S.prov[X].fort||0)>0))pd*=.9}
+   if(PORT[X]){const ob=new Set();A.forEach(d=>{if(!isNav(d))ob.add(d.o+":"+d.b)});let bm=0;ob.forEach(k=>{const[o,b]=k.split(":").map(Number);bm+=navBomb(o,b)});pa*=1+.12*Math.min(3,bm)}
   const sa=A.reduce((t,d)=>t+d.str,0),sd=D.reduce((t,d)=>t+d.str,0);
-  const hurt=(arr,tot,dmg)=>arr.forEach(d=>{const l=Math.min(d.str,dmg*d.str/tot),n=S.nations[d.o];d.str-=l;n.eq=Math.max(0,(n.eq||0)-l*.5);d.fight=S.day});
-  hurt(A,sa,pd*.045);hurt(D,sd,pa*.045);A.forEach(d=>d.dig=0);
+  const hurt=(arr,tot,dmg)=>!(tot>0)||!Number.isFinite(dmg)?0:arr.forEach(d=>{const l=Math.min(d.str,dmg*d.str/tot),n=S.nations[d.o];d.str-=l;n.eq=Math.max(0,(n.eq||0)-l*.5);d.fight=S.day});
+  {const dm=MD().dmg;hurt(A,sa,pd*.045*dm);hurt(D,sd,pa*.045*dm)}A.forEach(d=>d.dig=0);
   BT.set(X,{a:sa,d:sd,ao:A[0].o,bo:D[0].o});
   if(!PBT.has(X)){
    if(D.some(d=>d.o===S.player))ping(`${BN[X]}に${S.nations[A[0].o].name}国が攻撃してきた！`,'attack');
    else if(A.some(d=>d.o===S.player))toast(`${BN[X]}で戦闘開始`)}
   for(const d of D)if(d.str<2.5&&d.str>.5){
-   const j=ADJ[X].find(j=>(S.prov[j].owner===d.o||R(d.o,S.prov[j].owner).ally)&&!DB[j].some(e=>e.o!==d.o&&R(d.o,e.o).war));
+   const j=(isNav(d)?NADJ:ADJ)[X].find(j=>(S.prov[j].owner===d.o||R(d.o,S.prov[j].owner).ally)&&!DB[j].some(e=>e.o!==d.o&&R(d.o,e.o).war));
    if(j!==undefined){d.path=[];d.prog=0;place(d,j)}}
   for(const d of A)if(d.str<2.5){d.path=[];d.prog=0}
  }
@@ -570,13 +814,16 @@ function stepDivs(){
   const X=d.path[0],q=S.prov[X].owner;
   if(DB[X].some(e=>e.o!==d.o&&e.str>.5&&R(d.o,e.o).war))continue;
   const war=q!==d.o&&R(d.o,q).war,dd=Math.hypot(CEN[d.b][0]-CEN[X][0],CEN[d.b][1]-CEN[X][1]);
-  const days=war?Math.max(3,Math.round(dd/15*TD[T[X]])+1):Math.max(1,Math.round(dd/25*TD[T[X]]));
-  d.dig=0;d.prog+=1/(days*(isSea(d.b,X)?2.2:1));
-  if(d.prog>=.999){d.prog=0;place(d,X);d.path.shift();if(war&&S.prov[X].owner===q)capture(d,X,q)}
+  const days=isNav(d)?(war?Math.max(2,Math.round(dd/28)+1):Math.max(1,Math.round(dd/40))):(war?Math.max(3,Math.round(dd/15*TD[T[X]])+1):Math.max(1,Math.round(dd/25*TD[T[X]])));
+  d.dig=0;d.prog+=1/(days*(isNav(d)?NVSPD[d.t-NV0]:(isSea(d.b,X)?seaK(d):1))*(d.t===1?.8:d.t===3?1.15:1));
+  if(d.prog>=.999){d.prog=0;place(d,X);d.path.shift();if(war&&!isNav(d)&&S.prov[X].owner===q)capture(d,X,q)}
  }
  // 3) 補給・包囲による消耗・再編
+ const bc=new Array(S.nations.length).fill(0);for(const p of S.prov)bc[p.owner]++;
+ const lone=d=>bc[d.o]<=1&&S.prov[d.b].owner===d.o&&ADJ[d.b].some(j=>DB[j].some(e=>e.o!==d.o&&e.str>.5&&R(d.o,e.o).war));
  for(const d of S.divs){if(d.str<=.5)continue;const sf=supOf(d);d.sf=sf;
   if(sf<.5)d.str=Math.max(.3,d.str-.12);
+  else if(lone(d))d.str=Math.max(.3,d.str-.08);
   else if(d.fight!==S.day&&S.prov[d.b].owner===d.o&&d.str<10&&getSD(d.o)[d.b]>=0){const n=S.nations[d.o];if((n.eq||0)>.5){const h=Math.min(10-d.str,.1);d.str+=h;n.eq-=h*.5}}}
  reap();syncArmy();
 }
@@ -594,13 +841,13 @@ function tapBlock(i){
 function updSel(){
  const ids=new Set(S.divs.map(d=>d.id));[...selD].forEach(id=>{if(!ids.has(id))selD.delete(id)});
  const sl=selDivs(),sb=$("#selbar"),here=S&&me().alive?DB[sel].filter(d=>d.o===S.player):[];sb.classList.toggle("hide",!sl.length&&!here.length);
- if(!sl.length&&here.length){sb.innerHTML=`${BN[sel]}：自軍<b>${here.length}</b>個師団 <button class="pri" data-a="dhere">選択</button> <button data-a="dall">全軍選択</button>`;return}
- if(sl.length)sb.innerHTML=`選択中 <b>${sl.length}</b>個師団（兵${Math.floor(sl.reduce((t,d)=>t+d.str,0))}）<span class="mu">移動先をタップ</span> <button data-a="dfront">前線へ展開</button> <button data-a="dborder">国境へ均等配置</button> <button data-a="dspread">分散</button> <button data-a="dcamp">自動攻略</button> <button data-a="dstop">停止</button> <button data-a="drecall">帰還</button> <button data-a="dclr">解除</button>`}
+ if(!sl.length&&here.length){sb.innerHTML=`${BN[sel]}：自軍<b>${here.length}</b>個師団 <button class="pri" data-a="dhere">選択</button> ${here.some(isNav)?'<button data-a="dnav">艦隊のみ</button> ':""}<button data-a="dall">全軍選択</button>`;return}
+ if(sl.length)sb.innerHTML=`選択中 <b>${sl.length}</b>個師団${sl.some(isNav)?`（艦隊${sl.filter(isNav).length}）`:""}（兵${Math.floor(sl.reduce((t,d)=>t+d.str,0))}）<span class="mu">移動先をタップ</span> <button data-a="dfront">前線へ展開</button> <button data-a="dborder">国境へ均等配置</button> <button data-a="dspread">分散</button> <button data-a="dcamp">自動攻略</button> <button data-a="dstop">停止</button> <button data-a="drecall">帰還</button> <button data-a="dclr">解除</button>`}
 // ===== 描画 =====
 const DIVZ=1.6;
 function drawDivs(lab){
  const show=view.z>=DIVZ;
- const zs=Math.min(1.5,.7+view.z*.3),w=clamp(13*zs,11,22),h=w*.68,now=performance.now();
+ const zs=Math.min(1.5,.7+view.z*.3),w=clamp(9.5*zs,8.5,16),h=w*.68,now=performance.now();
  const pos=d=>{const a=CEN[d.b];if(d.path.length&&d.prog>0){const b=CEN[d.path[0]];return[a[0]+(b[0]-a[0])*d.prog,a[1]+(b[1]-a[1])*d.prog]}return a};
  cx.save();
  for(const d of S.divs){if(!d.path.length||(!show&&!selD.has(d.id)))continue;const q=S.prov[d.path[0]].owner,hos=q!==d.o&&R(d.o,q).war,sl=selD.has(d.id),mn=d.o===S.player;if(!mn&&!hos)continue;
@@ -611,29 +858,30 @@ function drawDivs(lab){
   cx.beginPath();cx.moveTo(b[0],b[1]);cx.lineTo(b[0]-9*Math.cos(an-.4),b[1]-9*Math.sin(an-.4));cx.lineTo(b[0]-9*Math.cos(an+.4),b[1]-9*Math.sin(an+.4));cx.closePath();cx.fillStyle=cx.strokeStyle;cx.fill()}
  cx.restore();
  BT.forEach((b,X)=>{const[x,y]=w2s(CEN[X][0],CEN[X][1]);cx.beginPath();cx.arc(x,y+10*zs,(9+2*Math.sin(now/180))*zs,0,7);cx.fillStyle="#c0392bcc";cx.fill();lab("⚔",x,y+10*zs,12*zs)});
- const box=(x,y,col,txt,mn,sl,bad,o)=>{
-  const fw=w*1.9,fh=h*1.15,x0=x-fw/2,y0=y-fh/2,ch_=P[o][0].slice(0,2),lt=lumOf(col)>150;
+ const box=(x,y,col,txt,mn,sl,bad,o,ty)=>{
+  const fw=w*1.85,fh=h*1.15,x0=x-fw/2,y0=y-fh/2,ch_=P[o][0].slice(0,2),lt=lumOf(col)>150;
   const fp=()=>{cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(x0+fw,y0);cx.lineTo(x0+fw*.86,y0+fh/2);cx.lineTo(x0+fw,y0+fh);cx.lineTo(x0,y0+fh);cx.closePath()};
   cx.save();cx.lineJoin="round";
   cx.strokeStyle="#e8e8e8";cx.lineWidth=2;cx.beginPath();cx.moveTo(x0,y0-fh*.3);cx.lineTo(x0,y0+fh*1.3);cx.stroke();
-  if(mn){cx.shadowColor="#fff";cx.shadowBlur=9;fp();cx.fillStyle=col;cx.fill();cx.shadowBlur=0;
+  if(mn){
    fp();cx.strokeStyle="#000";cx.lineWidth=5;cx.stroke();fp();cx.fillStyle=col;cx.fill();fp();cx.strokeStyle=sl?"#ffd54a":bad?"#ff3030":"#fff";cx.lineWidth=2.6;cx.stroke()}
   else{fp();cx.fillStyle=col;cx.fill();fp();cx.strokeStyle=sl?"#ffd54a":bad?"#ff3030":"#000";cx.lineWidth=sl?3.5:bad?3:1.6;cx.stroke()}
   cx.restore();
-  cx.font=`bold ${Math.max(9,Math.min(fh*.8,fw*.42))}px system-ui`;cx.textAlign="center";cx.textBaseline="middle";
+  cx.font=`bold ${Math.max(7.5,Math.min(fh*.8,fw*.42))}px system-ui`;cx.textAlign="center";cx.textBaseline="middle";
   cx.lineWidth=2.5;cx.strokeStyle=lt?"#fffd":"#000d";cx.strokeText(ch_,x0+fw*.46,y+1);cx.fillStyle=lt?"#111":"#fff";cx.fillText(ch_,x0+fw*.46,y+1);
+  {const bw=Math.max(8,fh*.62),bx=x0+fw-bw*.3,by=y0+fh-bw*.3;cx.fillStyle="#000d";cx.beginPath();cx.arc(bx,by,bw*.55,0,7);cx.fill();cx.fillStyle="#fff";cx.font=`bold ${Math.max(6.5,bw*.8)}px system-ui`;cx.fillText(ty>=0?UT[ty].k:"混",bx,by+.5)}
   if(txt)lab(txt,x,y+fh/2+6,Math.max(8,w*.7))};
  const grp=new Map(),mov=[],cnt={};
- for(const d of show?S.divs:[]){if(d.path.length&&d.prog>0){mov.push(d);continue}const k=d.b+":"+d.o;let g=grp.get(k);if(!g){g={b:d.b,o:d.o,l:[]};grp.set(k,g)}g.l.push(d)}
- grp.forEach(g=>{const[x0,y0]=w2s(CEN[g.b][0],CEN[g.b][1]),k=cnt[g.b]=(cnt[g.b]||0)+1;
-  box(x0+(k-1)*w*2.1,y0-4,colOf(g.o),g.l.length>1?"×"+g.l.length:"",g.o===S.player,g.l.some(d=>selD.has(d.id)),g.l.some(d=>d.sf!==undefined&&d.sf<.5),g.o)});
- mov.forEach(d=>{const p=pos(d),[x,y]=w2s(p[0],p[1]);box(x,y,colOf(d.o),"",d.o===S.player,selD.has(d.id),d.sf!==undefined&&d.sf<.5,d.o)});
+ for(const d of show?S.divs:[]){if(d.path.length&&d.prog>0){mov.push(d);continue}const k=d.b+":"+d.o+":"+(isNav(d)?1:0);let g=grp.get(k);if(!g){g={b:d.b,o:d.o,l:[]};grp.set(k,g)}g.l.push(d)}
+ grp.forEach(g=>{const[x0,y0]=w2s(CEN[g.b][0],CEN[g.b][1]);if(x0<-90||x0>cw+90||y0<-60||y0>ch+60)return;const k=cnt[g.b]=(cnt[g.b]||0)+1;
+  box(x0+(k-1)*w*2,y0-4,colOf(g.o),(isNav(g.l[0])?"⚓":"")+(g.l.length>1?"×"+g.l.length:""),g.o===S.player,g.l.some(d=>selD.has(d.id)),g.l.some(d=>d.sf!==undefined&&d.sf<.5),g.o,g.l.every(d=>(d.t||0)===(g.l[0].t||0))?(g.l[0].t||0):-1)});
+ mov.forEach(d=>{const p=pos(d),[x,y]=w2s(p[0],p[1]);if(x<-60||x>cw+60||y<-60||y>ch+60)return;box(x,y,colOf(d.o),"",d.o===S.player,selD.has(d.id),d.sf!==undefined&&d.sf<.5,d.o,d.t||0)});
 }
 // ===== AI：前線に配置し、弱い所を突く =====
 function aiMil(n,wars){
  const id=n.id,wid=new Set(wars.map(w=>w.id));if(!wid.size)return;
  const GS=new Set();S.wars.forEach(w=>{if(w.a===id)w.goals.forEach(g=>GS.add(g))});
- const mine=S.divs.filter(d=>d.o===id);if(!mine.length)return;
+ const mine=S.divs.filter(d=>d.o===id&&!isNav(d));if(!mine.length)return;
  const front=owned(id).filter(i=>ADJ[i].some(j=>wid.has(S.prov[j].owner)));if(!front.length)return;
  const ePow=X=>DB[X].filter(e=>wid.has(e.o)).reduce((t,e)=>t+e.str*(1+.1*S.nations[e.o].tech),0);
  const wt=f=>1+ADJ[f].reduce((t,j)=>t+(wid.has(S.prov[j].owner)?1+ePow(j)/10:0),0);
@@ -645,7 +893,7 @@ function aiMil(n,wars){
   if(best>=0){const p=findPath(id,d.b,best);if(p&&p.length){d.path=p;d.prog=0;cnt[best]++}}}
  for(const f of front){
   const here=mine.filter(d=>d.b===f&&!d.path.length&&d.str>=6);if(!here.length)continue;
-  const P=here.reduce((t,d)=>t+d.str*(1+.1*n.tech)*((n.eq||0)>0?1:.7),0);
+  const P=here.reduce((t,d)=>t+d.str*(1+.1*n.tech)*((n.eq||0)>0?1:.7),0)*(1+.1*Math.min(3,navBomb(id,f)));
   let bx=-1,be=1e9,bs=1e9;
   for(const X of ADJ[f]){if(!wid.has(S.prov[X].owner))continue;const est=Math.max(2,ePow(X))*1.2*TD[T[X]],sc=est*(GS.has(X)?.55:1);if(sc<bs){bs=sc;be=est;bx=X}}
   if(bx<0)continue;
@@ -656,6 +904,28 @@ function aiMil(n,wars){
 
 // ===== AI =====
 const OFN={join:"参戦要請",peace:"白紙和平",surrender:"降伏（占領地と戦争目標を確保して講和）",ally:"同盟",trade:"貿易協定"};
+function aiNavy(n,wars){
+ const id=n.id,wid=new Set(wars.map(w=>w.id));if(!wid.size)return;
+ const mine=S.divs.filter(d=>d.o===id&&isNav(d)&&d.str>.5);if(!mine.length)return;
+ const front=owned(id).filter(i=>PORT[i]&&NADJ[i].some(j=>wid.has(S.prov[j].owner)));
+ const cnt={};front.forEach(f=>cnt[f]=0);
+ mine.forEach(d=>{const l=d.path.length?d.path[d.path.length-1]:d.b;if(cnt[l]!==undefined)cnt[l]++});
+ const myP=d=>d.str*(1+.1*n.tech)*NVM[d.t-NV0][0];
+ const enP=X=>DB[X].filter(e=>wid.has(e.o)&&e.str>.5).reduce((t,e)=>t+e.str*(1+.1*S.nations[e.o].tech)*(isNav(e)?NVM[e.t-NV0][1]:1)*1.1,0);
+ for(const d of mine){
+  if(d.path.length||d.str<5)continue;
+  if(d.t!==6){
+   const grp=mine.filter(e=>e.b===d.b&&!e.path.length&&e.str>=5&&e.t!==6),P=grp.reduce((t,e)=>t+myP(e),0);
+   let bx=-1,bs=1e9;
+   for(const X of NADJ[d.b]){if(!canEnter(id,X))continue;const ow=S.prov[X].owner;if(ow!==id&&!wid.has(ow)&&!DB[X].some(e=>wid.has(e.o)))continue;
+    const est=enP(X);
+    if(est>0&&P>est*1.35&&est<bs){bs=est;bx=X}
+    else if(est===0&&d.t===4&&wid.has(ow)&&bx<0&&Math.random()<.12)bx=X}
+   if(bx>=0){grp.forEach(e=>{e.path=[bx];e.prog=0});continue}}
+  if(front.length&&cnt[d.b]===undefined){let best=-1,bsc=1e9;for(const f of front){if(cnt[f]<bsc){bsc=cnt[f];best=f}}
+   if(best>=0){const p=findNavPath(id,d.b,best);if(p&&p.length){d.path=p;d.prog=0;cnt[best]++}}}
+ }
+}
 function ai(n){
  const id=n.id,mine=owned(id);
  n.tax=n.gold<50?.3:.25;
@@ -670,61 +940,75 @@ function ai(n){
  }
  const threatened=S.divs.some(d=>d.o!==id&&S.prov[d.b].owner===id&&R(id,d.o).war);
  const target=(nPop(id)/15+own(id)*15+(wars.length?own(id)*15:0)+Math.min(n.gold/100,own(id)*150))*(threatened?1.2:1);
- for(let k=0;k<(threatened?5:3)&&n.gold>100&&n.army<target;k++)doRecruit(n);
- const big=alive().filter(o=>o.id!==id&&own(o.id)>=12&&!R(id,o.id).war&&!R(id,o.id).ally&&neighbors(id).includes(o.id)).sort((a,b)=>own(b.id)-own(a.id))[0];
+ for(let k=0;k<(threatened?5:3)&&n.gold>100&&n.army<(mine.length<=1?Math.min(target,20):target);k++)doRecruit(n,undefined,aiType(n))||doRecruit(n);
+ const big=alive().filter(o=>o.id!==id&&own(o.id)>=12&&!R(id,o.id).war&&!R(id,o.id).ally&&opOf(id,o.id)<75&&neighbors(id).includes(o.id)).sort((a,b)=>own(b.id)-own(a.id))[0];
  if(big){const tension=(own(big.id)-11)*.012+(big.infamy||0)*.002,atWar=S.nations.filter(x=>x.alive&&x.id!==big.id&&R(x.id,big.id).war).length;
-  if(wars.length<3&&n.army>15&&atWar<Math.max(2,Math.floor(own(big.id)/6))&&Math.random()<Math.min(.25,tension)*(n.ai+.3))aiWar(n,big.id)}
+  if(wars.length<3&&n.army>15&&atWar<Math.max(2,Math.floor(own(big.id)/6))&&Math.random()<Math.min(.25,tension)*(n.ai+.3)*Math.max(.1,1.4-opOf(id,big.id)/70))aiWar(n,big.id)}
  if(wars.length<3&&S.day>5&&Math.random()<n.ai*.5*(S.diff||1)&&n.army>12){
-  const c=neighbors(id).filter(o=>(!R(id,o).ally||alive().length<=8)&&!shareAlly(id,o)&&S.day>=(R(id,o).truce||0)&&!(o===S.player&&S.day<60)&&pow(S.nations[o])<pow(n)*1.6),rd=c.filter(o=>hasCB(id,o)),jw=c.filter(o=>alliesOf(id).some(a=>R(a.id,o).war)),pk=jw.length&&Math.random()<.6?jw:rd.length?rd:c;
-  if(pk.length)aiWar(n,pk[Math.floor(Math.random()*pk.length)]);
+  const c=neighbors(id).filter(o=>(!R(id,o).ally||alive().length<=8)&&!shareAlly(id,o)&&opOf(id,o)<70&&S.day>=(R(id,o).truce||0)&&!(o===S.player&&S.day<60)&&pow(S.nations[o])<pow(n)*1.6),rd=c.filter(o=>hasCB(id,o)),jw=c.filter(o=>alliesOf(id).some(a=>R(a.id,o).war)),pk=jw.length&&Math.random()<.6?jw:rd.length?rd:c;
+  if(pk.length)aiWar(n,wpick(pk,pk.map(o=>Math.max(5,100-opOf(id,o)))));
  }
- for(const w of wars)aiPeace(n,getWar(id,w.id));
+ for(const w of wars){aiPeace(n,getWar(id,w.id));if(!n.alive)return}
  {const als=alliesOf(id);
   for(const al of als){const x=S.nations.find(z=>z.alive&&z.id!==id&&z.id!==al.id&&R(al.id,z.id).war&&!R(id,z.id).war&&!R(id,z.id).ally&&S.day>=(R(id,z.id).truce||0)&&neighbors(id).includes(z.id));
    if(x&&wars.length<2&&n.army>14&&trustOf(id,al.id)>=45&&Math.random()<.05){joinWar(id,x.id);break}}
   if(als.some(a=>a.id===S.player)&&me().alive&&S.offers.length<4&&Math.random()<.03){const e=wars.find(w=>w.id!==S.player&&!R(S.player,w.id).war&&!R(S.player,w.id).ally&&S.day>=(R(S.player,w.id).truce||0));
    if(e&&!S.offers.some(x=>x.t==="join"&&x.f===id)){S.offers.push({t:"join",f:id,e:e.id,d:S.day});toast(`${n.name}国から参戦要請（${e.name}国との戦争）`)}}}
- aiMil(n,wars);
- if(Math.random()<.02&&allyCount(id)<3){
-  const c=neighbors(id).filter(o=>!R(id,o).war&&!R(id,o).ally&&o!==S.player);
-  if(c.length){const o=c[Math.floor(Math.random()*c.length)];if(allyCount(o)<3&&Math.random()>.4){mkAlly(id,o,50);logm(`${n.name}国と${S.nations[o].name}国が同盟を結んだ。`)}}
+ aiMil(n,wars);aiNavy(n,wars);
+ if(Math.random()<.02&&bloc(id).size<ALMAX){
+  const c=nearby(id,2).filter(o=>!R(id,o).war&&!R(id,o).ally&&o!==S.player&&S.day>=(R(id,o).cdA||0)&&opOf(id,o)>=52&&opOf(o,id)>=52);
+  if(c.length){const o=c[Math.floor(Math.random()*c.length)];if(!blocFull(id,o)&&Math.random()<(opOf(o,id)-40)/60){mkAlly(id,o,Math.max(opOf(id,o),50));logm(`${n.name}国と${S.nations[o].name}国が同盟を結んだ。`)}}
  }
- if(Math.random()<.004&&S.offers.length<4){const pl=me(),rp=R(id,pl.id);
+ if(Math.random()<(mine.length<=1&&R(id,S.player).war?.04:.004)&&S.offers.length<4){const pl=me(),rp=R(id,pl.id);
   if(pl.alive){let t=null;
    if(rp.war){const w=getWar(id,pl.id),m=wsOf(w,id);if(m<=-20)t="surrender";else if(S.day-rp.since>60&&Math.abs(m)<20)t="peace"}
-   else if(!rp.war&&!rp.ally&&neighbors(pl.id).includes(id)&&allyCount(id)<3&&allyCount(pl.id)<3&&Math.random()<.5)t="ally";
-   else if(!rp.war&&!rp.trade&&Math.random()<.4)t="trade";
+   else if(!rp.war&&!rp.ally&&neighbors(pl.id).includes(id)&&!blocFull(id,pl.id)&&opOf(id,pl.id)>=60&&Math.random()<.5)t="ally";
+   else if(!rp.war&&!rp.trade&&!tradeBlock(id,pl.id)&&opOf(id,pl.id)>=45&&Math.random()<.4)t="trade";
    if(t&&!S.offers.some(x=>x.f===id&&x.t===t)){S.offers.push({t,f:id,d:S.day});toast(`${n.name}国から${OFN[t]}の提案`)}}}
- if(Math.random()<.03){const c=neighbors(id).filter(o=>!R(id,o).war&&!R(id,o).trade&&o!==S.player);if(c.length)R(id,c[0]).trade=true}
+ if(Math.random()<.03){const c=S.nations.filter(x=>x.alive&&x.id!==id).map(x=>x.id).filter(o=>o!==S.player&&!R(id,o).trade&&S.day>=(R(id,o).cdT||0)&&!tradeBlock(id,o)&&opOf(id,o)>=45&&opOf(o,id)>=45).sort((x,y)=>tradeVal(id,y)-tradeVal(id,x));if(c.length){const o=c[Math.floor(Math.random()*Math.min(3,c.length))];R(id,o).trade=true;addTrust(id,o,3)}}
 }
 
 // ===== 時間進行 =====
-function endGame(win,msg){if(S.ended===win)return;S.ended=win;speed=0;const mine=win===S.player;
- $("#endBody").innerHTML=`<h1>${win>=0?(mine?"日本統一！":"統一される"):"滅亡"}</h1><p>${msg}</p><p class="mu">${dateStr()}（${S.day}日目）／最終領土 ${win>=0?owned(win).length:0}ブロック</p><button class="pri" id="eCont">${mine?"統一後も続ける":"観戦を続ける"}</button><button id="eTitle">タイトルへ</button>`;
+function endGame(win,msg,lvl){if(lvl!==1){if(S.ended===win)return;S.ended=win}speed=0;const mine=win===S.player;SFX.play(mine?"win":"lose",2000);
+ $("#endBody").innerHTML=`<h1>${lvl===1?"全国統一！":lvl===2?"完全統一！":win>=0?(mine?"日本統一！":"統一される"):"滅亡"}</h1><p>${msg}</p><p class="mu">${dateStr()}（${S.day}日目）／最終領土 ${win>=0?owned(win).length:0}ブロック</p><button class="pri" id="eCont">${mine?"統一後も続ける":"観戦を続ける"}</button><button id="eCard">結果カードを作る</button><button id="eTitle">タイトルへ</button>`;$("#eCard").onclick=()=>openCard();
  $("#end").classList.remove("hide");$("#eCont").onclick=()=>{$("#end").classList.add("hide");ui()};$("#eTitle").onclick=()=>{$("#end").classList.add("hide");showTitle()}}
-function checkEnd(){if(S.ended!==undefined)return;const al=alive();let top=-1,tn=0;const cnt={};S.prov.forEach(p=>cnt[p.owner]=(cnt[p.owner]||0)+1);for(const k in cnt)if(cnt[k]>tn){tn=cnt[k];top=+k}
- if(top===S.player&&tn>=NB*.95)endGame(top,`${S.nations[top].name}国が全国の95%を掌握し、天下統一を成し遂げた。`);
- else if(al.length===1)endGame(al[0].id,`${al[0].name}国が全ての国を平らげた。`);
- else if(!me().alive)endGame(-1,`${me().name}国は滅び去った。`)}
+function uniStat(){const id=S.player,own=owned(id).length;let ally=0;const names=[];S.nations.forEach(o=>{if(o.alive&&o.id!==id&&R(id,o.id).ally){ally+=owned(o.id).length;names.push(o.name)}});return{own,ally,names}}
+function checkEnd(){if(S.ended!==undefined)return;const al=alive();
+ if(!me().alive){endGame(-1,`${me().name}国は滅び去った。`);return}
+ if(al.length===1&&al[0].id!==S.player){endGame(al[0].id,`${al[0].name}国が全ての国を平らげた。`);return}
+ const u=uniStat(),lv=u.own>=NB?2:(u.own+u.ally>=NB?1:0);
+ if(lv>(S.uni||0)){S.uni=lv;
+  if(lv===2)endGame(S.player,`${me().name}国が自国のみで全${NB}ブロックを掌握し、完全統一を成し遂げた。`,2);
+  else endGame(S.player,`${me().name}国と同盟国（${u.names.slice(0,6).join("・")}${u.names.length>6?"ほか":""}）が全${NB}ブロックを掌握し、全国統一を成し遂げた。`,1)}}
 function recordHist(){const h=S.hist=S.hist||[],c=new Array(47).fill(0);S.prov.forEach(p=>c[p.owner]++);const n=me(),u=upkeep(n),inc=n.alive?income(n):0;
  h.push({d:S.day,c,g:Math.round(n.gold),gi:+(inc+u).toFixed(1),u:+u.toFixed(1),p:Math.round(nPop(n.id)),a:Math.round(n.army)});
  if(h.length>360){for(let k=h.length-2;k>=1;k-=2)h.splice(k,1)}}
 function tick(){
- S.day++;buildDB();SDC={};
+ S.day++;buildDB();SDC={};OPC.clear();
  for(const n of S.nations){
   if(!n.alive)continue;
-  n.gold+=income(n);n.eq=Math.min((n.eq||0)+prod(n),100+facOf(n)*8);if(n.cd>0)n.cd--;
+  {let v=income(n);if(v>0&&n.id!==S.player)v*=DIFFS[dlv()].eco;n.gold+=v}n.eq=Math.min((n.eq||0)+prod(n),100+facOf(n)*8);if(n.cd>0)n.cd--;
   if(n.gold<0){S.divs.forEach(d=>{if(d.o===n.id)d.str*=.99});n.gold=Math.max(n.gold,-500)}
   for(const i of owned(n.id)){const p=S.prov[i];p.pop=clamp(p.pop*(1+.00006*n.infra-(n.tax-.25)*.0004),2,BP[i]*2.5)}
   if(n.id!==S.player&&(S.day+n.id)%3===0)ai(n);
  }
  for(const p of S.prov)if(p.u>0)p.u--;
- tickWars();if(S.day%2===0)checkAnnex();allyTick();stepDivs();if(S.day%5===0)expel();if(S.day%2===0)autoCamp();if(S.day%3===0)autoGarrison();if(S.day%4===0)autoSpread();rebellions();events();if(S.day%5===0)checkEnd();S.offers.forEach(o=>{if(o.t==="join"&&S.day-o.d>=30&&R(S.player,o.f).ally)addTrust(S.player,o.f,-5)});S.offers=S.offers.filter(o=>S.day-o.d<30&&!(o.t==="join"&&(R(S.player,o.e).war||!S.nations[o.e].alive)));
- if(S.day%10===0)recordHist();if(S.day%30===0)save(true);
+ tickWars();if(S.day%2===0)checkAnnex();allyTick();opinionTick();if(S.day%10===0){tradeTick();allyClosure()}stepDivs();if(S.day%5===0)expel();if(S.day%2===0)autoCamp();if(S.day%3===0)autoGarrison();if(S.day%4===0)autoSpread();rebellions();events();reapNations();if(S.day%5===0)checkEnd();S.offers.forEach(o=>{if(o.t==="join"&&S.day-o.d>=30&&R(S.player,o.f).ally)addTrust(S.player,o.f,-5)});S.offers=S.offers.filter(o=>S.day-o.d<30&&!(o.t==="join"&&(R(S.player,o.e).war||!S.nations[o.e].alive)));
+ fixNaN();if(S.day%10===0)recordHist();if(S.day%30===0)save(true);
 }
+let _sig="",_lastDraw=0,_lastUi=0,_uiPend=false;
+// 変化があった時だけ描画（静止中は再描画しない）。戦闘の点滅などアニメ中は最大30fps。ティックは1フレーム24msの予算内で処理
 function frame(t){
- if(S&&speed>0){acc+=(t-last)*speed;let k=0;while(acc>=1000&&k++<30){acc-=1000;tick()}if(k)ui()}
- last=t;stepView(performance.now());draw();requestAnimationFrame(frame);
+ const now=performance.now();
+ if(S&&speed>0){acc=Math.min(acc+Math.min(t-last,250)*speed,4000);let k=0;
+  while(acc>=1000&&k<30){acc-=1000;tick();k++;if(performance.now()-now>24){acc=Math.min(acc,1000);break}}
+  if(k)_uiPend=true}
+ if(_uiPend&&(speed<3||now-_lastUi>=250)){_uiPend=false;_lastUi=now;ui()}
+ last=t;stepView(now);
+ let anim=!!(vAnim||vInert)||BT.size>0;if(!anim)for(const k in flash){anim=true;break}
+ const sg=S?[view.z,view.x,view.y,sel,mmode,mmode>=5?S.day:0,cw,ch,mapVer,selD.size].join():"";
+ if(sg!==_sig||(anim&&now-_lastDraw>=33)){_sig=sg;_lastDraw=now;draw()}
+ requestAnimationFrame(frame)
 }
 
 // ===== セーブ =====
@@ -741,8 +1025,9 @@ function openSlots(mode){SLM=S&&mode==="save"?"save":"load";renderSlots();$("#sl
 function renderSlots(){
  const row=(k,label,auto)=>{const m=getMeta(k),has=!!(m||localStorage.getItem(SK(k)));
   return `<div class="card"><div class="row" style="border:0;padding:0"><div class="nm"><b>${label}</b>${has?(m?`<div>${m.name?m.name+"　":""}${m.n}国　${m.date}</div><div class="mu">${m.day}日目／${m.own}ブロック／人口${m.pop}万／${new Date(m.ts).toLocaleString("ja-JP")}</div>`:'<div class="mu">セーブデータあり</div>'):'<div class="mu">空き</div>'}</div>
-  <div class="bt">${SLM==="save"&&!auto?`<button class="pri" data-sl="save" data-k="${k}">保存</button>`:""}${has?`<button class="${SLM==="load"?"pri":""}" data-sl="load" data-k="${k}">読込</button><button class="dg" data-sl="del" data-k="${k}">削除</button>`:""}</div></div></div>`};
+  <div class="bt">${SLM==="save"&&!auto?`<button class="pri" data-sl="save" data-k="${k}">保存</button>`:""}${has?`<button class="${SLM==="load"?"pri":""}" data-sl="load" data-k="${k}">読込</button><button data-sl="exp" data-k="${k}">書出</button><button class="dg" data-sl="del" data-k="${k}">削除</button>`:""}</div></div></div>`};
  let h=`<h2 style="color:var(--ac);margin:0 0 6px">${SLM==="save"?"セーブ":"ロード"}</h2>`;
+ h+=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${SLM==="save"?'<button class="pri" id="slExp" style="flex:1">現在のゲームをファイルに書き出す</button>':""}<button id="slImp" style="flex:1">ファイルから読み込む</button></div><input type="file" id="slFile" accept=".json,.uw47,application/json" class="hide">`;
  for(let i=0;i<NSLOT;i++)h+=row("s"+i,"スロット"+(i+1));
  h+='<div class="mu" style="margin:6px 0 2px">オートセーブ（30日ごと・最新3件を循環）</div>';
  for(let i=0;i<NAUTO;i++)h+=row("a"+i,"オート"+(i+1),true);
@@ -751,12 +1036,64 @@ function renderSlots(){
  $("#slotBody").innerHTML=h}
 $("#slots").addEventListener("click",e=>{
  if(e.target.id==="slClose"||e.target===$("#slots")){$("#slots").classList.add("hide");return}
+ if(e.target.id==="slExp"){if(!S)return;const nm=prompt("ファイルに付けるメモ（空欄可）","");if(nm===null)return;dlFile(`{"game":"UW47","ver":1,"meta":${JSON.stringify(metaOf(nm))},"S":${JSON.stringify(S)},"sel":${JSON.stringify(sel)}}`,fileName(metaOf(nm)));toast("ファイルに書き出しました");return}
+ if(e.target.id==="slImp"){$("#slFile").click();return}
  const t=e.target.closest("[data-sl]");if(!t)return;const k=t.dataset.k,a=t.dataset.sl;
  if(a==="save"){const old=getMeta(k);let nm=null;try{nm=prompt("セーブ名（空欄可）",old&&old.name||"")}catch(x){nm=""}if(nm===null)return;
   toast(saveKey(k,nm)?"セーブしました":"セーブに失敗（保存容量がいっぱいです。不要なスロットを削除してください）",3500);renderSlots()}
+ else if(a==="exp"){const raw=localStorage.getItem(k==="legacy"?SAVE:SK(k));if(!raw)return;const m=getMeta(k);dlFile(`{"game":"UW47","ver":1,"meta":${m?JSON.stringify(m):"null"},`+raw.slice(raw.indexOf("{")+1),fileName(m||{n:"save",day:0}));toast("ファイルに書き出しました")}
  else if(a==="load"){if(load(k==="legacy"?SAVE:SK(k))){$("#slots").classList.add("hide");$("#menu").classList.add("hide");begin()}else toast("ロードに失敗しました")}
  else if(a==="del"){if(confirm("このセーブを削除しますか？")){try{localStorage.removeItem(k==="legacy"?SAVE:SK(k));localStorage.removeItem(SK(k)+"_m")}catch(x){}renderSlots();$("#bCont").classList.toggle("hide",!hasAnySave())}}});
-function load(key){try{const d=JSON.parse(localStorage.getItem(key||SAVE));if(!d)return false;S=d.S;S.hist=S.hist||[];S.ended=S.ended;S.offers=S.offers||[];if(!S.divs){S.divs=[];S.nid=1;buildDB();(S.ops||[]).forEach(o=>{S.nations[o.a].army+=Math.max(0,o.army)});S.nations.forEach(n=>{if(n.alive)seedDivs(n)});delete S.ops}S.nid=S.nid||(1+S.divs.reduce((m,d)=>Math.max(m,d.id),0));buildDB();selD.clear();S.diff=S.diff||1;S.nations.forEach(n=>{if(n.ms===undefined){n.ms=.3;n.fb=0;n.eq=Math.round(n.army*.3)}});S.wars=S.wars||[];S.cbs=S.cbs||[];assignColors();S.wid=S.wid||(1+S.wars.reduce((m,w)=>Math.max(m,w.id),0));Object.entries(S.rel).forEach(([k,r])=>{if(r.war){const[x,y]=k.split("-").map(Number);getWar(x,y)}});sel=d.sel;view={z:1,x:0,y:0};return true}catch(e){return false}}
+function dlFile(text,name,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:type||"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+const fileName=m=>`UW47_${(m.n||"save")}_${m.day||0}日目_${new Date().toISOString().slice(0,10)}.json`;
+$("#slots").addEventListener("change",e=>{if(e.target.id!=="slFile")return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{if(load(null,String(r.result))){$("#slots").classList.add("hide");$("#menu").classList.add("hide");begin();toast("ファイルから読み込みました")}else toast("読み込みに失敗しました（形式が違うか、壊れています）",3500)};r.readAsText(f);e.target.value=""});
+function load(key,txt){try{const d=JSON.parse(txt||localStorage.getItem(key||SAVE));if(!d)return false;if(txt&&!(d.S&&Array.isArray(d.S.nations)&&d.S.nations.length===P.length&&Array.isArray(d.S.prov)&&d.S.prov.length===BL.length))return false;S=d.S;S.dl=S.dl===undefined?2:S.dl;S.mode=S.mode||"normal";S.uni=S.uni||0;if(!S.res)S.res=genRes();for(const k in S.rel){const r=S.rel[k];if(r.tr!==undefined){r.h=clamp(r.tr-50,-60,60);delete r.tr}}NDM=null;OPC.clear();if(S.seed===undefined)S.seed=Math.floor(Math.random()*2147483647);if(S.world===undefined)S.world=-1;S.hist=S.hist||[];S.ended=S.ended;S.offers=S.offers||[];if(!S.divs){S.divs=[];S.nid=1;buildDB();(S.ops||[]).forEach(o=>{S.nations[o.a].army+=Math.max(0,o.army)});S.nations.forEach(n=>{if(n.alive)seedDivs(n)});delete S.ops}S.nid=S.nid||(1+S.divs.reduce((m,d)=>Math.max(m,d.id),0));buildDB();selD.clear();S.diff=S.diff||1;S.nations.forEach(n=>{if(n.ms===undefined){n.ms=.3;n.fb=0;n.eq=Math.round(n.army*.3)}});S.wars=S.wars||[];S.cbs=S.cbs||[];assignColors();S.wid=S.wid||(1+S.wars.reduce((m,w)=>Math.max(m,w.id),0));Object.entries(S.rel).forEach(([k,r])=>{if(r.war){const[x,y]=k.split("-").map(Number);getWar(x,y)}});reapNations();fixNaN();sel=d.sel;view={z:1,x:0,y:0};return true}catch(e){return false}}
+
+// ===== 結果カード =====
+let CARDBLOB=null,CARDSP=0;
+function makeCard(){
+ refreshBloc();if(segVer!==mapVer)buildSeg();
+ const W=960,H=1270,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+ const F='"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif',n=me(),u=uniStat(),cnt={};S.prov.forEach(p=>cnt[p.owner]=(cnt[p.owner]||0)+1);
+ const rank=Object.values(cnt).filter(v=>v>(cnt[n.id]||0)).length+1,wars=S.nations.filter(o=>o.alive&&o.id!==n.id&&R(n.id,o.id).war).length;
+ const T=(t,x,y,sz,col,al,w)=>{g.font=`${w||"bold"} ${sz}px ${F}`;g.fillStyle=col;g.textAlign=al||"left";g.textBaseline="alphabetic";g.fillText(t,x,y)};
+ const rr=(x,y,w,h,r,f)=>{g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=f;g.fill()};
+ g.fillStyle="#0f1720";g.fillRect(0,0,W,H);
+ T("Unification War 47",40,70,40,"#e0a030");T("戦況レポート",920,70,24,"#8aa0b4","right","normal");
+ T(dateStr()+"（"+S.day+"日目）",40,108,24,"#8aa0b4",0,"normal");
+ T(n.name+"国",40,196,84,"#e6edf3");
+ const st=!n.alive?"滅亡":S.uni===2?"完全統一 達成":S.uni===1?"全国統一 達成":"統一進行中",sc0=!n.alive?"#d9534f":S.uni?"#e0a030":"#4caf70";
+ g.font=`bold 28px ${F}`;const bw0=g.measureText(st).width+40;rr(920-bw0,142,bw0,56,28,sc0);T(st,920-bw0/2,181,28,"#0f1720","center");
+ T(`難易度：${DIFFS[dlv()].n}　／　モード：${MD().n}　／　世情：${(WORLDS[S.world]||{n:"—"}).n}`,40,240,24,"#8aa0b4",0,"normal");
+ const bx=40,by=262,bw=880,bh=560;rr(bx,by,bw,bh,14,"#0b121a");
+ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;PB.forEach(b=>{x0=Math.min(x0,b[0]);y0=Math.min(y0,b[1]);x1=Math.max(x1,b[2]);y1=Math.max(y1,b[3])});
+ const k=Math.min((bw-40)/(x1-x0),(bh-40)/(y1-y0)),tx=bx+bw/2-(x0+x1)/2*k,ty=by+bh/2-(y0+y1)/2*k;
+ const mine=new Set([n.id]);S.nations.forEach(o=>{if(o.alive&&o.id!==n.id&&R(n.id,o.id).ally)mine.add(o.id)});
+ g.save();g.beginPath();g.roundRect(bx,by,bw,bh,14);g.clip();g.translate(tx,ty);g.scale(k,k);g.lineJoin="round";g.lineCap="round";
+ for(let p=0;p<47;p++){g.save();g.clip(PATH[p]);for(const i of BOF[p]){const o=S.prov[i].owner;g.globalAlpha=mine.has(o)?1:.55;g.fillStyle=colOf(o);g.fill(CPATH[i])}g.restore()}
+ g.globalAlpha=1;const L=(p,col,w,al)=>{g.strokeStyle=col;g.lineWidth=w/k;g.globalAlpha=al||1;g.stroke(p)};
+ L(SEGP.i,"#000",.8,.3);L(SEGP.c,"#04101a",1.2,.9);L(SEGP.b,"#0a0f14",2.4);L(SEGP.a,"#0a0f14",1.6,.55);
+ g.restore();
+ if(n.alive){const cp=capOf(n.id);if(cp>=0){g.save();g.beginPath();g.roundRect(bx,by,bw,bh,14);g.clip();T("★",tx+CEN[cp][0]*k,ty+CEN[cp][1]*k+8,26,"#fff","center");g.restore()}}
+ const sw=(col,t,x)=>{g.fillStyle=col;g.fillRect(x,by+bh-34,16,16);T(t,x+22,by+bh-20,18,"#e6edf3",0,"normal")};
+ sw(colOf(n.id),"自国・同盟国",bx+16);sw("#556070","他国（暗色）",bx+190);
+ const own=u.own,pct=own/NB*100,pa=(own+u.ally)/NB*100;
+ const cells=[["領土",`${own} / ${NB}`,"ブロック"],["自国の領有率",pct.toFixed(1)+"%","完全統一まで"+(NB-own)],["同盟込み領有率",pa.toFixed(1)+"%","全国統一まで"+Math.max(0,NB-own-u.ally)],
+  ["人口",Math.round(nPop(n.id)).toLocaleString()+"万","自国"],["兵力",Math.round(S.divs.filter(d=>d.o===n.id).reduce((t,d)=>t+d.str,0)).toLocaleString(),"師団の総兵力"],["資金",Math.round(n.gold).toLocaleString(),"収入"+(n.alive?income(n).toFixed(1):0)+"/日"],
+  ["領土順位",rank+"位",`全${alive().length}国中`],["同盟国",u.names.length+"国",u.names.slice(0,2).join("・")||"なし"],["交戦中",wars+"国",wars?"戦争中":"平和"]];
+ const cw0=280,ch0=110,gx=20,gy=16,sy=by+bh+24;
+ cells.forEach((cl,i)=>{const x=40+(i%3)*(cw0+gx),y=sy+Math.floor(i/3)*(ch0+gy);rr(x,y,cw0,ch0,12,"#17222e");T(cl[0],x+18,y+30,20,"#8aa0b4",0,"normal");T(cl[1],x+18,y+75,40,"#e6edf3");T(cl[2],x+18,y+100,16,"#8aa0b4",0,"normal")});
+ return c}
+function openCard(){if(!S)return;const c=makeCard();CARDSP=speed;speed=0;
+ c.toBlob(b=>{CARDBLOB=b;const url=URL.createObjectURL(b);
+  $("#cardBody").innerHTML=`<h1>結果カード</h1><img src="${url}" style="width:100%;border-radius:8px;margin:6px 0"><button class="pri" id="cSave">画像を保存</button><button id="cShare" class="hide">共有</button><button id="cClose">閉じる</button>`;
+  const fn=`UW47_${me().name}_${S.day}日目.png`;
+  $("#cSave").onclick=()=>{const a=document.createElement("a");a.href=url;a.download=fn;document.body.appendChild(a);a.click();a.remove()};
+  try{const f=new File([b],fn,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[f]})){$("#cShare").classList.remove("hide");$("#cShare").onclick=()=>navigator.share({files:[f],title:"Unification War 47"}).catch(()=>{})}}catch(e){}
+  $("#cClose").onclick=()=>{$("#card").classList.add("hide");URL.revokeObjectURL(url);speed=CARDSP;ui()};
+  $("#card").classList.remove("hide")},"image/png")}
+$("#mCard").onclick=()=>{$("#menu").classList.add("hide");openCard()};
 
 // ===== 描画 =====
 const cv=$("#cv"),cx=cv.getContext("2d");let cw=0,ch=0,dpr=1;
@@ -766,6 +1103,7 @@ const w2s=(x,y)=>{const s=sc();return[(cw-W0*s)/2+view.x+x*s,(ch-H0*s)/2+view.y+
 // ポリゴン準備（座標は0.1単位の整数→実数）
 const RINGS=GEO.map(rs=>rs.map(f=>{const a=new Float32Array(f.length);for(let k=0;k<f.length;k++)a[k]=f[k]/10;return a}));
 const PATH=RINGS.map(rs=>{const p=new Path2D();rs.forEach(a=>{p.moveTo(a[0],a[1]);for(let k=2;k<a.length;k+=2)p.lineTo(a[k],a[k+1]);p.closePath()});return p});
+const PB=RINGS.map(rs=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const a of rs)for(let k=0;k<a.length;k+=2){if(a[k]<x0)x0=a[k];if(a[k]>x1)x1=a[k];if(a[k+1]<y0)y0=a[k+1];if(a[k+1]>y1)y1=a[k+1]}return[x0,y0,x1,y1]});
 const CENP=RINGS.map(rs=>{let best=[rs[0][0],rs[0][1]],ba=0;for(const a of rs){let A=0,x=0,y=0;const n=a.length;for(let k=0;k<n;k+=2){const k2=(k+2)%n,c=a[k]*a[k2+1]-a[k2]*a[k+1];A+=c;x+=(a[k]+a[k2])*c;y+=(a[k+1]+a[k2+1])*c}A/=2;if(Math.abs(A)>ba&&A){ba=Math.abs(A);best=[x/(6*A),y/(6*A)]}}return best});
 // 辺ごとに隣り合う県を求める（国境描画用）
 const SEG=(()=>{const m=new Map();RINGS.forEach((rs,pi)=>rs.forEach(a=>{const n=a.length/2;for(let k=0;k<n;k++){const k2=(k+1)%n,x1=a[2*k],y1=a[2*k+1],x2=a[2*k2],y2=a[2*k2+1];
@@ -805,6 +1143,17 @@ const nearB=(A,B)=>{let r=[A[0],B[0]],bd=1e18;for(const i of A)for(const j of B)
 EDGES.forEach(([u,v])=>{if(!BOF[u].some(i=>ADJ[i].some(j=>BC[j]===v)))linkS(...nearB(BOF[u],BOF[v]))});
 {const comp=BL.map(()=>-1);let nc=0;for(let i=0;i<NB;i++)if(comp[i]<0){const q=[i];comp[i]=nc;for(let k=0;k<q.length;k++)for(const j of ADJ[q[k]])if(comp[j]<0){comp[j]=nc;q.push(j)}nc++}
  for(let c=1;c<nc;c++){const A=[],B=[];comp.forEach((x,i)=>{if(x===c)A.push(i);else if(x===0)B.push(i)});linkS(...nearB(A,B))}}
+const LANES=[["北海道南東部", "青森南東部"], ["新潟北西部", "石川北部1"], ["島根北東部1", "島根北東部2"], ["愛媛北部", "大分北部"], ["島根南西部", "長崎北部"], ["福岡北部", "長崎北部"], ["熊本南西部", "長崎南西部"], ["鹿児島南部2", "沖縄北東部"], ["沖縄南西部", "鹿児島南部1"], ["千葉南西部", "静岡東部"]];
+LANES.forEach(([a,b])=>{const i=BNAME.indexOf(a),j=BNAME.indexOf(b);if(i>=0&&j>=0)linkS(i,j)});
+// 港（海に面したブロック）と、艦隊が移動できる航行グラフ（海岸沿いの隣接＋航路）
+const PORT=BL.map(()=>false),NADJ=BL.map(()=>[]);
+{const rk=(x,y)=>Math.round(x*100)+","+Math.round(y*100),CP=BL.map(()=>new Set());
+ for(const e of SEG2)if(e.b<0){CP[e.a].add(rk(e.x1,e.y1));CP[e.a].add(rk(e.x2,e.y2))}
+ for(let i=0;i<NB;i++)PORT[i]=CP[i].size>0;
+ const nl=(a,b)=>{if(a!==b&&!NADJ[a].includes(b)){NADJ[a].push(b);NADJ[b].push(a)}};
+ for(let i=0;i<NB;i++)for(const j of ADJ[i]){if(j<i||isSea(i,j)||!PORT[i]||!PORT[j])continue;for(const k of CP[i])if(CP[j].has(k)){nl(i,j);break}}
+ for(const k of SEA){const a=Math.floor(k/1000),b=k%1000;if(PORT[a]&&PORT[b])nl(a,b)}
+ [["神奈川南西部","静岡東部"]].forEach(([a,b])=>{const i=BNAME.indexOf(a),j=BNAME.indexOf(b);if(i>=0&&j>=0&&PORT[i]&&PORT[j])nl(i,j)})}
 let hlS=-1,hlP=null;function hlPath(){if(hlS!==sel){hlS=sel;hlP=new Path2D();for(const e of SEG2)if(e.a===sel||e.b===sel){hlP.moveTo(e.x1,e.y1);hlP.lineTo(e.x2,e.y2)}}return hlP}
 function buildSeg(){
  const P0={c:new Path2D(),i:new Path2D(),b:new Path2D(),w:new Path2D(),m:new Path2D(),a:new Path2D()};
@@ -823,18 +1172,32 @@ function draw(){
  if(segVer!==mapVer)buildSeg();
  cx.setTransform(dpr*s,0,0,dpr*s,dpr*ox,dpr*oy);cx.lineJoin="round";cx.lineCap="round";
  const sd=mmode===2?supDist(S.player):null;
- for(let p=0;p<47;p++){cx.save();cx.clip(PATH[p]);for(const i of BOF[p]){const c=mmode===3?(S.prov[i].owner===S.player?(S.prov[i].owner===BC[i]?"#2f5d3a":`hsl(${Math.max(0,120-(S.prov[i].ur||0)*1.2)},70%,${40+(S.prov[i].ur||0)*.1}%)`):"#3a4652"):mmode===1?TC[T[i]]:mmode===2?(S.prov[i].owner===S.player?`hsl(${sd[i]<0?0:Math.max(0,120-sd[i]*18)},65%,45%)`:"#3a4652"):S.nations[S.prov[i].owner].color;cx.fillStyle=c;cx.fill(CPATH[i]);cx.strokeStyle=c;cx.lineWidth=1.2*px;cx.stroke(CPATH[i])}cx.restore()}
+ const th=mmode===4?(()=>{const t=new Array(NB).fill(0),pid=S.player;for(const d of S.divs){if(d.o===pid||!R(pid,d.o).war)continue;t[d.b]+=d.str;for(const j of ADJ[d.b])t[j]+=d.str}return t})():null;
+ const RESC=["#c9b13c","#9a8f86","#3aa0d8","#e46fa5","#e08a3a"];
+let mext=null;
+if(mmode>=5){const pid=S.player,PV=S.prov;
+ if(mmode===5){const rc={};for(const o of S.nations){if(!o.alive)continue;const r=o.id===pid?null:relOf(pid,o.id);rc[o.id]=o.id===pid?"#3d8bd9":r&&r.war?"#d9534f":r&&r.ally?"#47b36b":r&&r.trade?"#d9c445":!tradeBlock(pid,o.id)?"#8a6fb5":"#5b6674"}mext=i=>rc[PV[i].owner]||"#5b6674"}
+ else if(mmode===6||mmode===7){const v=new Array(NB);let mx=1;for(let i=0;i<NB;i++){v[i]=mmode===6?(PV[i].u>0?0:blockInc(S.nations[PV[i].owner],i)):Math.sqrt(PV[i].pop);if(v[i]>mx)mx=v[i]}
+  mext=i=>{const t=Math.max(0,v[i])/mx;return mmode===6?`hsl(${200-t*160},65%,${26+t*28}%)`:`hsl(30,70%,${16+t*44}%)`}}
+ else if(mmode===8)mext=i=>{const k=resK(i);return k>=0?RESC[k]:"#3a4652"};
+ else{const wg=new Set(),eg=new Set(),wo=new Set(),cbn=new Set(),nbs=new Set(neighbors(pid));
+  for(const w of S.wars){if(w.a!==pid&&w.b!==pid)continue;wo.add(w.a===pid?w.b:w.a);if(w.a===pid)w.goals.forEach(g=>wg.add(g));else w.goals.forEach(g=>eg.add(g))}
+  nbs.forEach(o=>{if(hasCB(pid,o))cbn.add(o)});
+  mext=i=>{const o=PV[i].owner;if(o===pid)return eg.has(i)?"#ff9f1a":"#2f5d3a";if(wo.has(o))return wg.has(i)?"#ff3b30":"#a8403a";if(isAlly(pid,o))return"#47b36b";if(cbn.has(o))return"#e0a030";if(nbs.has(o))return"#5b6674";return"#2e3640"}}}
+const mcol=i=>mmode>=5?mext(i):(mmode===4?(S.prov[i].owner===S.player?`hsl(${Math.max(0,120-th[i]*12)},70%,42%)`:"#3a4652"):mmode===3?(S.prov[i].owner===S.player?(S.prov[i].owner===BC[i]?"#2f5d3a":`hsl(${Math.max(0,120-(S.prov[i].ur||0)*1.2)},70%,${40+(S.prov[i].ur||0)*.1}%)`):"#3a4652"):mmode===1?TC[T[i]]:mmode===2?(S.prov[i].owner===S.player?`hsl(${sd[i]<0?0:Math.max(0,120-sd[i]*18)},65%,45%)`:"#3a4652"):S.nations[S.prov[i].owner].color);
+const vx0=-ox/s-3,vy0=-oy/s-3,vx1=(cw-ox)/s+3,vy1=(ch-oy)/s+3;
+ for(let p=0;p<47;p++){const bb=PB[p];if(bb[2]<vx0||bb[0]>vx1||bb[3]<vy0||bb[1]>vy1)continue;cx.save();cx.clip(PATH[p]);for(const i of BOF[p]){const c=mcol(i);cx.fillStyle=c;cx.fill(CPATH[i]);cx.strokeStyle=c;cx.lineWidth=1.2*px;cx.stroke(CPATH[i])}cx.restore()}
  for(const k in flash){const t=(now-flash[k])/1800;if(t>=1){delete flash[k];continue}cx.globalAlpha=(1-t)*.8;cx.fillStyle="#fff";cx.save();cx.clip(PATH[BC[k]]);cx.fill(CPATH[k]);cx.restore();cx.globalAlpha=1}
  cx.globalAlpha=.25;cx.fillStyle="#fff";cx.save();cx.clip(PATH[BC[sel]]);cx.fill(CPATH[sel]);cx.restore();cx.globalAlpha=1;
  const L=(p,col,w,al)=>{cx.strokeStyle=col;cx.lineWidth=w*px;cx.globalAlpha=al||1;cx.stroke(p)};
  L(SEGP.i,"#000",.8,.3);L(SEGP.c,"#04101a",1.2,.9);L(SEGP.b,"#0a0f14",2.4);L(SEGP.a,"#0a0f14",1.6,.55);L(SEGP.m,"#000",5,.8);L(SEGP.m,"#fff",2.6);L(SEGP.w,"#000",6,.9);L(SEGP.w,"#ff3030",3);L(SEGP.w,"#fff",.9,.8);
- cx.globalAlpha=.8;cx.strokeStyle="#bfe6ff";cx.lineWidth=1.8*px;cx.setLineDash([7*px,5*px]);cx.beginPath();for(const k of SEA){const a=Math.floor(k/1000),b=k%1000;cx.moveTo(CEN[a][0],CEN[a][1]);cx.lineTo(CEN[b][0],CEN[b][1])}cx.stroke();cx.setLineDash([]);
+ cx.globalAlpha=.8;cx.strokeStyle="#bfe6ff";cx.lineWidth=1.8*px;cx.setLineDash([7*px,5*px]);cx.beginPath();for(const k of SEA){const a=Math.floor(k/1000),b=k%1000;cx.moveTo(CEN[a][0],CEN[a][1]);cx.lineTo(CEN[b][0],CEN[b][1])}cx.stroke();cx.setLineDash([]);cx.fillStyle="#bfe6ff";cx.beginPath();for(const k of SEA){const a=Math.floor(k/1000),b=k%1000;cx.moveTo(CEN[a][0]+2.4*px,CEN[a][1]);cx.arc(CEN[a][0],CEN[a][1],2.4*px,0,7);cx.moveTo(CEN[b][0]+2.4*px,CEN[b][1]);cx.arc(CEN[b][0],CEN[b][1],2.4*px,0,7)}cx.fill();
  cx.globalAlpha=1;cx.strokeStyle="#ffd54a";cx.lineWidth=3*px;cx.stroke(hlPath());
  // ラベル
  cx.setTransform(dpr,0,0,dpr,0,0);cx.textAlign="center";cx.textBaseline="middle";
  const lab=(t,x,y,fs)=>{cx.font=`bold ${fs}px system-ui`;cx.lineWidth=3;cx.strokeStyle="#000c";cx.strokeText(t,x,y);cx.fillStyle="#fff";cx.fillText(t,x,y)};
  {const cp=S.nations[S.player].alive?capOf(S.player):-1;if(cp>=0){const[x,y]=w2s(...CEN[cp]);lab("★",x,y-12,14)}}
- if(view.z>=2.4)for(let i=0;i<NB;i++){const[x,y]=w2s(CEN[i][0],CEN[i][1]);lab(BN[i],x,y-14,9)}
+ if(view.z>=2.4)for(let i=0;i<NB;i++){const[x,y]=w2s(CEN[i][0],CEN[i][1]);if(x<-40||x>cw+40||y<-30||y>ch+30)continue;lab(BN[i],x,y-14,9)}
  for(const n of S.nations){
   if(!n.alive)continue;const o=owned(n.id);
   if(o.length>=3){let sx=0,sy=0,w=0;o.forEach(i=>{const wt=S.prov[i].pop;sx+=CEN[i][0]*wt;sy+=CEN[i][1]*wt;w+=wt});
@@ -882,7 +1245,14 @@ const up=e=>{const was=ptr.size;
  else if(!ptr.size)drag=null};
 cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",e=>{ptr.delete(e.pointerId);pinch=null;drag=null});
 cv.addEventListener("wheel",e=>{e.preventDefault();vAnim=null;vInert=null;const dy=e.deltaY*(e.deltaMode===1?16:1);zoomAt(e.offsetX,e.offsetY,view.z*Math.exp(-dy*(e.ctrlKey?.01:.0017)))},{passive:false});
-$("#zi").onclick=()=>zoomBy(1.6);$("#zo").onclick=()=>zoomBy(1/1.6);$("#zm").onclick=()=>{mmode=(mmode+1)%4;toast(["政治","地形","補給","不穏度"][mmode]+"マップ")};
+$("#zi").onclick=()=>zoomBy(1.6);$("#zo").onclick=()=>zoomBy(1/1.6);const MMODES=[["政治","国ごとの色"],["地形",""],["補給","補給の遠近"],["不穏度",""],["脅威","敵師団の近さ"],["外交","同盟・貿易・敵対"],["収入","ブロック別の収入"],["人口",""],["特産品",""],["戦争","目標・理由・前線"]];
+const MLEG=[null,TN.map((n,i)=>[TC[i],n]),[["hsl(120,65%,45%)","補給良好"],["hsl(0,65%,45%)","補給が遠い"]],[["#2f5d3a","核領土"],["hsl(120,70%,45%)","安定"],["hsl(0,70%,45%)","不穏"]],[["hsl(120,70%,42%)","安全"],["hsl(0,70%,42%)","敵師団が近い"]],
+ [["#3d8bd9","自国"],["#47b36b","同盟"],["#d9c445","貿易中"],["#8a6fb5","貿易可能"],["#d9534f","戦争"],["#5b6674","その他"]],[["hsl(200,65%,26%)","低"],["hsl(40,65%,54%)","高"]],[["hsl(30,70%,16%)","少"],["hsl(30,70%,60%)","多"]],null,
+ [["#2f5d3a","自国"],["#ff9f1a","敵の狙い"],["#ff3b30","こちらの目標"],["#a8403a","敵領"],["#47b36b","同盟"],["#e0a030","開戦理由あり"],["#5b6674","隣国"]]];
+function setLegend(){const l=$("#mlegend"),L=mmode===8?RESN.map((n,i)=>[RESC[i],n]).concat([["#3a4652","なし"]]):MLEG[mmode];$("#zm").classList.toggle("on",mmode!==0);
+ if(!L){l.classList.add("hide");return}l.innerHTML=`<b>${MMODES[mmode][0]}</b>`+L.map(x=>`<span style="display:inline-block;width:10px;height:10px;background:${x[0]};border-radius:2px;margin:0 3px 0 8px"></span>${x[1]}`).join("");l.classList.remove("hide")}
+$("#zm").onclick=()=>{const m=$("#mmenu");if(m.classList.contains("hide")){m.innerHTML=MMODES.map((x,i)=>`<button data-m="${i}" class="${i===mmode?"on":""}">${x[0]}<span class="mu"> ${x[1]}</span></button>`).join("");m.classList.remove("hide")}else m.classList.add("hide")};
+$("#mmenu").onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;mmode=+b.dataset.m;$("#mmenu").classList.add("hide");setLegend()};
 $("#zr").onclick=fitView;
 $("#zc").onclick=()=>{if(S&&me().alive){const c=capOf(S.player);sel=c;focusB(c,1.8);ui()}};
 function setMin(v){$("#side").classList.toggle("min",v);$("#zp").classList.toggle("on",v);try{localStorage.setItem("jp47_min",v?"1":"0")}catch(e){}}
@@ -892,7 +1262,7 @@ if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe($("#mapwrap"))
 addEventListener("resize",resize);
 
 // ===== UI =====
-const TABS=[["sum","概況"],["dom","内政"],["dip","外交"],["ally","同盟"],["mil","軍事"],["rank","順位"],["stat","統計"],["log","ログ"]];
+const TABS=[["sum","概況"],["dom","内政"],["dip","外交"],["op","印象"],["ally","同盟"],["mil","軍事"],["rank","順位"],["stat","統計"],["log","ログ"]];
 function ui(){
  if(!S)return;
  refreshBloc();
@@ -905,23 +1275,23 @@ function ui(){
  $("#hRank").textContent=n.alive?`🏆${rank}位/${alive().length}`:"滅亡";
  {const u=n.alive?urStat(n):{hi:0};$("#hAl").textContent=u.hi?`⚠不穏${u.hi}`:"";$("#hAl").dataset.p=u.hi?u.w:""}
  document.querySelectorAll("[data-sp]").forEach(b=>b.classList.toggle("on",+b.dataset.sp===speed));
- $("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}" class="${k===tab?"on":""}">${l}</button>`).join("");
- const pn=$("#panel");scrollKeep=pn.scrollTop;
- pn.innerHTML=({sum:tSum,dom:tDom,dip:tDip,ally:tAlly,mil:tMil,rank:tRank,stat:tStat,log:tLog})[tab]();
- pn.scrollTop=scrollKeep;
+ setHTML($("#tabs"),TABS.map(([k,l])=>`<button data-t="${k}" class="${k===tab?"on":""}">${l}</button>`).join(""));
+ const pn=$("#panel");setHTML(pn,({sum:tSum,dom:tDom,dip:tDip,op:tOp,ally:tAlly,mil:tMil,rank:tRank,stat:tStat,log:tLog})[tab]());
 }
+function setHTML(el,h){if(el._h===h)return;el._h=h;const st=el.scrollTop,sl=el.scrollLeft;el.innerHTML=h;el.scrollTop=st;el.scrollLeft=sl}
 function tSum(){
  const n=me(),o=S.prov[sel].owner,on=S.nations[o],r=o!==n.id?R(n.id,o):null,adjMine=ADJ[sel].some(j=>S.prov[j].owner===n.id);
  let btn="";
  if(n.alive&&o!==n.id&&!r.war&&adjMine)btn+=`<button class="dg" data-a="war" data-b="${o}">${r.ally?"同盟を破棄して宣戦":"宣戦布告"}</button> `;
  const here=DB[sel],byO={};here.forEach(d=>{(byO[d.o]=byO[d.o]||[]).push(d)});
  const stat=Object.keys(byO).map(k=>{const l=byO[k];return `${S.nations[k].name}国 ${l.length}個師団（兵${Math.floor(l.reduce((t,d)=>t+d.str,0))}）`}).join(" ／ ")||"なし";
+  const portTxt=PORT[sel]?" ⚓港"+(blockaded(sel)?"（敵艦隊に封鎖中：収入-40%）":""):"";
  if(r&&r.war)btn+=`<button class="pri" data-a="peace" data-b="${o}">講和会議</button> `;
  if(here.some(d=>d.o===n.id))btn+=`<button data-a="dhere">この県の自軍を選択</button> `;
  if(o===n.id){
   const p=S.prov[sel];
   if(p.owner!==BC[sel])btn+=`<button data-a="pac" ${n.gold<pacCost(sel)||(p.ur||0)<5?"disabled":""}>慰撫 💰${pacCost(sel)}</button> `;
-  btn+=`<button data-a="dev" ${(p.dev||0)>=5||n.gold<costDev(sel)?"disabled":""}>${(p.dev||0)>=5?"開発MAX":"県開発 💰"+costDev(sel)}</button> <button data-a="fort" ${(p.fort||0)>=3||n.gold<costFort(sel)?"disabled":""}>${(p.fort||0)>=3?"要塞MAX":"要塞 💰"+costFort(sel)}</button> <button data-a="recat" ${n.gold<15||(n.eq||0)<10?"disabled":""}>ここで徴兵</button> `}
+  btn+=`<button data-a="dev" ${(p.dev||0)>=5||n.gold<costDev(sel)?"disabled":""}>${(p.dev||0)>=5?"開発MAX":"県開発 💰"+costDev(sel)}</button> <button data-a="fort" ${(p.fort||0)>=3||n.gold<costFort(sel)?"disabled":""}>${(p.fort||0)>=3?"要塞MAX":"要塞 💰"+costFort(sel)}</button> ${UT.map((u,t)=>`<button data-a="recat" data-t="${t}" ${n.gold<u.g||(n.eq||0)<u.e||(u.nv&&portFor(n,sel)<0)?"disabled":""}>${u.n}${u.nv?"建造":"徴兵"}</button>`).join(" ")} `}
  if(r&&r.war)btn+=`<button data-a="dcamp">${on.name}国を自動攻略</button> `;
  if(selDivs().length)btn+=`<button class="pri" data-a="dgo">選択部隊を${o!==n.id&&r&&r.war?"侵攻させる":"ここへ移動"}</button>`;
  const offers=S.offers.map((o,i)=>`<div class="card"><b>${S.nations[o.f].name}国</b>から${o.t==="join"?`参戦要請：<b>${S.nations[o.e].name}国</b>との戦争に加わってほしい`:OFN[o.t]+"の提案"}<div style="margin-top:6px"><button class="pri" data-a="oy" data-i="${i}">承諾</button> <button data-a="on" data-i="${i}">拒否</button></div></div>`).join("");
@@ -929,14 +1299,15 @@ function tSum(){
  <div><span>国名</span>${n.name}国</div><div><span>領土</span>${owned(n.id).length}ブロック</div>
  <div><span>人口</span>${Math.round(nPop(n.id))}万</div><div><span>兵力</span>${Math.floor(n.army)}（${myDivs(n.id).length}個師団）</div>
  <div><span>技術</span>Lv${n.tech}</div><div><span>インフラ</span>Lv${n.infra}</div>
- <div><span>税率</span>${Math.round(n.tax*100)}%</div><div><span>国力</span>${Math.round(pow(n))}</div><div><span>反乱リスク</span>${riskLabel(n)}${urStat(n).hi?" ⚠"+urStat(n).hi:""}</div><div><span>同盟</span>${allyCount(n.id)}/3</div><div><span>悪名</span>${Math.round(n.infamy||0)}</div><div><span>首都</span>${n.alive?BN[capOf(n.id)]:"-"}</div><div><span>国策</span>${n.pol?POL[n.pol][0]:"なし"}</div></div>
+ <div><span>税率</span>${Math.round(n.tax*100)}%</div><div><span>国力</span>${Math.round(pow(n))}</div><div><span>反乱リスク</span>${riskLabel(n)}${urStat(n).hi?" ⚠"+urStat(n).hi:""}</div><div><span>同盟</span>${allyCount(n.id)}/${ALMAX-1}</div><div><span>悪名</span>${Math.round(n.infamy||0)}</div><div><span>首都</span>${n.alive?BN[capOf(n.id)]:"-"}</div><div><span>国策</span>${n.pol?POL[n.pol][0]:"なし"}</div></div>
  <div class="card"><b><span class="dot" style="background:${on.color}"></span>${BN[sel]}</b>
  <span class="mu"> 所属：${on.name}国${r?(r.war?'<span class="tag w">戦争</span>':"")+(r.ally?'<span class="tag a">同盟</span>':"")+(r.trade?'<span class="tag t">貿易</span>':""):""}</span>
  <div class="kv" style="margin-top:6px"><div><span>人口</span>${Math.round(S.prov[sel].pop)}万</div><div><span>経済係数</span>×${BE[sel]}</div><div><span>地形</span>${TN[T[sel]]}（防御×${TD[T[sel]]}）</div><div><span>区分</span>${S.prov[sel].owner===BC[sel]?"核領土":"占領地"}${S.prov[sel].u>0?"（占領直後"+S.prov[sel].u+"日）":""}</div>
+ <div><span>特産</span>${resK(sel)>=0?RESN[resK(sel)]:"なし"}</div>
  <div><span>開発／要塞</span>Lv${S.prov[sel].dev||0}／Lv${S.prov[sel].fort||0}</div>
  ${S.prov[sel].owner!==BC[sel]?`<div style="display:block;grid-column:1/-1"><span>不穏度 ${Math.round(S.prov[sel].ur||0)}/100</span><div class="bar"><i style="width:${S.prov[sel].ur||0}%;background:hsl(${Math.max(0,120-(S.prov[sel].ur||0)*1.2)},70%,50%)"></i></div></div>`:""}
  <div><span>隣接</span>${ADJ[sel].map(j=>BN[j]).join("・")}</div></div>
- <div style="margin-top:6px"><span class="mu">駐留：</span>${stat}</div>
+ <div style="margin-top:6px"><span class="mu">駐留：</span>${stat}${portTxt}</div>
  <div style="margin-top:6px">${btn}</div></div>
  <div class="mu" style="font-size:12px">【部隊の動かし方】自軍のいるブロックを2回タップで全師団を選択（軍事タブで個別選択も可）→移動先のブロックをタップで命令。敵ブロックを指定すると、宣戦中なら侵攻します。敵師団がいる間は戦闘になり、いなければ進軍して占領します。補給線を断たれた敵地の部隊は消耗します。</div>`;
 }
@@ -944,6 +1315,7 @@ function tDom(){
  const n=me();
  return `<div class="row"><div class="nm">インフラ整備 Lv${n.infra}→${n.infra+1}<div class="mu">人口成長・税収UP</div></div><button data-a="infra" ${n.infra>=MAXLV||n.gold<costInfra(n)?"disabled":""}>${n.infra>=MAXLV?"MAX":"💰"+costInfra(n)}</button></div>
  <div class="row"><div class="nm">技術開発 Lv${n.tech}→${n.tech+1}<div class="mu">税収・軍事力UP</div></div><button data-a="tech" ${n.tech>=MAXLV||n.gold<costTech(n)?"disabled":""}>${n.tech>=MAXLV?"MAX":"💰"+costTech(n)}</button></div>
+ <div class="row"><div class="nm">商業振興 Lv${n.com||0}→${(n.com||0)+1}<div class="mu">全収入+6%/Lv（最大5）。他に関税（港・貿易中）・都市の商業税・同盟事業・講和の賠償金も収入に</div></div><button data-a="com" ${(n.com||0)>=5||n.gold<costCom(n)?"disabled":""}>${(n.com||0)>=5?"MAX":"💰"+costCom(n)}</button></div>
  <div class="row"><div class="nm">税率 ${Math.round(n.tax*100)}%<div class="mu">35%前後が最大。高すぎると税収も人口も減る</div></div><div class="bt"><button data-a="taxdn">－5%</button><button data-a="taxup">＋5%</button></div></div>
  <div class="row"><div class="nm">工場 ${facOf(n).toFixed(1)}基<div class="mu">軍需${Math.round(msOf(n)*100)}%（装備+${prod(n).toFixed(1)}/日）／民間${100-Math.round(msOf(n)*100)}%：税収補正×${(1+.6*(.3-msOf(n))).toFixed(2)}</div></div><div class="bt"><button data-a="msdn">軍需－10%</button><button data-a="msup">軍需＋10%</button></div></div>
  <div class="row"><div class="nm">工場を増築 +2基<div class="mu">装備ストック上限も増える</div></div><button data-a="fac" ${n.gold<costFac(n)?"disabled":""}>💰${costFac(n)}</button></div>
@@ -951,41 +1323,51 @@ function tDom(){
  const left=Math.max(0,POLCD-(S.day-(n.polT===undefined?-999:n.polT)));
  const hot=owned(n.id).filter(i=>S.prov[i].owner!==BC[i]&&(S.prov[i].ur||0)>=25).sort((a,b)=>(S.prov[b].ur||0)-(S.prov[a].ur||0)).slice(0,8).map(i=>`<div class="row"><div class="nm"><a data-a="dfocus" data-p="${i}" style="color:var(--ac);cursor:pointer">${BN[i]}</a><div class="bar"><i style="width:${S.prov[i].ur}%;background:hsl(${Math.max(0,120-S.prov[i].ur*1.2)},70%,50%)"></i></div></div><span class="mu">${Math.round(S.prov[i].ur)}</span><button data-a="pacat" data-p="${i}" ${n.gold<pacCost(i)?"disabled":""}>慰撫💰${pacCost(i)}</button></div>`).join("");
  return `<div style="margin-top:10px"><b>国策</b> <span class="mu">${left?`（切替まであと${left}日）`:"（変更可）"}</span>${pols}</div>
+ <div style="margin-top:10px"><b>国債</b> <span class="mu">借入${Math.round(n.debt||0)}／上限${DEBTCAP}・利息 1日${((n.debt||0)*DEBTR).toFixed(1)}</span><div class="row" style="border:0"><div class="nm mu">資金を前借りできます。利息は毎日の収入から引かれます。</div><button data-a="debt" data-k="in" ${(n.debt||0)+500>DEBTCAP?"disabled":""}>+500</button><button data-a="debt" data-k="out" ${(n.debt||0)<=0||n.gold<1?"disabled":""}>返済</button></div></div>
  <div style="margin-top:10px"><b>治安</b> <span class="mu">占領地${u.cnt}／警戒${u.hi}</span>
  <div class="row"><div class="nm">全国慰撫<div class="mu">占領地すべての不穏度 −15</div></div><button data-a="pacall" ${u.cnt&&n.gold>=pacAllCost(n)?"":"disabled"}>💰${pacAllCost(n)}</button></div>
  ${hot||'<div class="mu">不穏度25以上の占領地はありません。</div>'}
  <div class="mu" style="font-size:12px;margin-top:4px">占領地は時間とともに不穏度が上がり、100で反乱（同時発生は20日に1か所まで）。<b>2以上の兵力を持つ師団を駐屯</b>させると大きく抑えられ、低税率・インフラ・安定統治・慰撫・占領から300日経過でも緩和されます。マップの◐ボタンで「不穏度」表示に切替できます。</div></div>`})()}
- <div class="mu" style="margin-top:8px">収入は各県の人口・経済係数・インフラ・技術・税率で決まり、軍の維持費と貿易協定が加減されます。</div>`;
+ <div class="mu" style="margin-top:8px">収入は各県の人口・経済係数・インフラ・技術・税率・商業振興で決まり、貿易・関税・都市・同盟事業が加わり、軍の維持費と国債の利息が引かれます。</div>`;
 }
 function tMil(){
  const n=me(),mine=myDivs(n.id).sort((a,b)=>a.b-b.b||a.id-b.id);
- const stT=d=>{if(d.path.length){const X=d.path[d.path.length-1],q=S.prov[d.path[0]].owner,at=q!==d.o&&R(d.o,q).war;return (at?"⚔侵攻→":"移動→")+BN[X]+(d.prog>0?" "+Math.round(d.prog*100)+"%":"")}return d.dig>=5?"塹壕":"待機"};
+ const stT=d=>{if(d.path.length){const X=d.path[d.path.length-1],q=S.prov[d.path[0]].owner,at=q!==d.o&&R(d.o,q).war;return (at?(isNav(d)?"⚔砲戦→":"⚔侵攻→"):(isNav(d)?"航行→":"移動→"))+BN[X]+(d.prog>0?" "+Math.round(d.prog*100)+"%":"")}return isNav(d)?"停泊":d.dig>=5?"塹壕":"待機"};
  const bts=[...BT].filter(([X,b])=>b.ao===n.id||b.bo===n.id).map(([X,b])=>`<div class="row"><div class="nm">⚔ ${BN[X]} <span class="mu">${S.nations[b.ao].name}国 兵${Math.floor(b.a)} vs ${S.nations[b.bo].name}国 兵${Math.floor(b.d)}</span></div><button data-a="dfocus" data-p="${X}">表示</button></div>`).join("");
  const rl=d=>d.camp!==undefined?`<span class="tag w">攻略:${S.nations[d.camp].name}</span>`:d.gar!==undefined?`<span class="tag a">駐屯:${BN[d.gar]}</span>`:d.man?'<span class="tag">手動</span>':"";
  const rows=mine.map(d=>{const sf=d.sf===undefined?1:d.sf,on=selD.has(d.id);
-  return `<div class="row" style="${d.b===sel?"background:#ffffff0d":""}"><button data-a="dsel" data-i="${d.id}" class="${on?"pri":""}">${on?"✔":"○"}</button><div class="nm">第${d.id}師団 <span class="mu">${BN[d.b]}</span>${rl(d)}<div style="height:5px;background:#0006;border-radius:3px;margin-top:3px"><div style="height:5px;width:${clamp(d.str*10,0,100)}%;background:${colOf(n.id)};border-radius:3px"></div></div><span class="mu">兵${d.str.toFixed(1)}　${stT(d)}</span><span class="tag ${sf<.5?"w":sf<.8?"":"a"}">補給${Math.round(sf*100)}%${sf<.5?" 包囲":""}</span></div></div>`}).join("");
- return `<div class="row"><div class="nm">兵力 ${Math.floor(n.army)}（${mine.length}個師団）<div class="mu">維持費 ${(n.army*.05).toFixed(1)}/日　装備${Math.floor(n.eq||0)}(+${prod(n).toFixed(1)}/日)</div></div><button data-a="recruit" ${n.gold<15||(n.eq||0)<10?"disabled":""}>+1師団 (💰15 🔧10)</button></div>
- <div class="mu" style="font-size:12px;margin:2px 0">新師団は首都に配備されます。海を越える移動は時間が約2倍かかり、上陸攻撃は攻撃力-20%（地図の水色の点線が海路）。味方領内なら自由に移動でき、自領で補給を受けると兵力が回復します。</div>
- <div class="row"><div class="nm">自動管理<div class="mu">前線展開：戦争相手との国境を重点配置／国境へ均等配置：全国境へ均等に／分散：重なった師団を周囲の自領へ散らす／自動攻略：戦争相手の県を次々に侵攻／自動駐屯：待機中の師団が不穏な占領地へ。手動で動かした師団は対象外（「自動に戻す」で復帰）</div></div><div class="bt"><button data-a="dfront">前線へ展開</button><button data-a="dborder">国境へ均等配置</button><button data-a="dspread">分散</button><button data-a="dcamp">自動攻略</button><button data-a="dsp" class="${n.sp?"pri":""}">自動分散：${n.sp?"ON":"OFF"}</button><button data-a="dag" class="${n.ag?"pri":""}">自動駐屯：${n.ag?"ON":"OFF"}</button><button data-a="dauto">自動に戻す</button></div></div>
+  return `<div class="row" style="${d.b===sel?"background:#ffffff0d":""}"><button data-a="dsel" data-i="${d.id}" class="${on?"pri":""}">${on?"✔":"○"}</button><div class="nm">第${d.id}${isNav(d)?"艦隊":"師団"}<span class="tag t">${UT[d.t||0].n}</span> <span class="mu">${BN[d.b]}</span>${rl(d)}<div style="height:5px;background:#0006;border-radius:3px;margin-top:3px"><div style="height:5px;width:${clamp(d.str*10,0,100)}%;background:${colOf(n.id)};border-radius:3px"></div></div><span class="mu">兵${d.str.toFixed(1)}　${stT(d)}</span><span class="tag ${sf<.5?"w":sf<.8?"":"a"}">補給${Math.round(sf*100)}%${sf<.5?" 包囲":""}</span></div></div>`}).join("");
+ return `<div class="row"><div class="nm">兵力 ${Math.floor(n.army)}（${mine.length}個師団${n.nav>0?`／艦隊${mine.filter(isNav).length}隻`:""}）<div class="mu">維持費 ${upkeep(n).toFixed(1)}/日　装備${Math.floor(n.eq||0)}(+${prod(n).toFixed(1)}/日)</div></div><div class="bt">${UT.map((u,t)=>`<button data-a="recruit" data-t="${t}" ${n.gold<u.g||(n.eq||0)<u.e||(u.nv&&portFor(n)<0)?"disabled":""}>+${u.n} (💰${u.g} 🔧${u.e})</button>`).join("")}</div></div>
+ <div class="mu" style="font-size:12px;margin:2px 0">新師団は首都に配備されます。兵種：歩兵＝標準／機甲＝平地の攻撃に強く速いが山岳に弱い／砲兵＝単独は弱いが攻撃を支援し要塞・都市の守りを削る／山岳兵＝丘陵・山岳に強いが遅い。海を越える移動は時間が約2倍かかり、上陸攻撃は攻撃力-20%（地図の水色の点線が航路）ですが、出発港に自軍の艦隊がいると緩和されます。艦隊は港で建造し、航路や海岸沿いに移動して敵艦隊・敵港を攻撃します（占領はできません）。敵港に居座ると封鎖して収入-40%。戦艦は同じ港から攻める陸軍に艦砲支援を与えます。味方領内なら自由に移動でき、自領で補給を受けると兵力が回復します。</div>
+ <div class="row"><div class="nm">自動管理<div class="mu">前線展開：戦争相手との国境を重点配置／国境へ均等配置：全国境へ均等に／分散：選択した師団を半分に分け、半分を隣の自領へ移動／自動攻略：戦争相手の県を次々に侵攻／自動駐屯：待機中の師団が不穏な占領地へ。手動で動かした師団は対象外（「自動に戻す」で復帰）</div></div><div class="bt"><button data-a="dfront">前線へ展開</button><button data-a="dborder">国境へ均等配置</button><button data-a="dspread">分散</button><button data-a="dcamp">自動攻略</button><button data-a="dsp" class="${n.sp?"pri":""}">自動分散：${n.sp?"ON":"OFF"}</button><button data-a="dag" class="${n.ag?"pri":""}">自動駐屯：${n.ag?"ON":"OFF"}</button><button data-a="dauto">自動に戻す</button></div></div>
  <div class="row"><div class="nm">選択 ${selDivs().length}個師団<div class="mu">マップで移動先をタップ</div></div><div class="bt"><button data-a="dhere">この県</button><button data-a="dall">全軍</button><button data-a="dgo" ${selDivs().length?"":"disabled"}>選択県へ</button><button data-a="dstop">停止</button><button data-a="drecall">帰還</button><button data-a="dclr">解除</button></div></div>
+${(()=>{const l=S.wars.filter(w=>w.a===n.id||w.b===n.id).map(w=>{const o=w.a===n.id?w.b:w.a,m=wsOf(w,n.id);return `<div class="row"><div class="nm"><span class="dot" style="background:${colOf(o)}"></span>${S.nations[o].name}国 <span class="mu">開戦${S.day-w.start}日目</span><div class="bar"><i style="width:${(m+100)/2}%;background:${m>=0?"#6fd48a":"#ff8d88"}"></i></div></div><b>${m>=0?"+":""}${Math.round(m)}</b></div>`}).join("");return l?"<b>戦況（戦争スコア）</b>"+l:""})()}
  ${bts?"<b>交戦中</b>"+bts:""}<b>自軍の師団</b>${rows||'<div class="mu">師団がありません。</div>'}`;
 }
+function tOp(){const n=me(),L=alive().filter(o=>o.id!==n.id).map(o=>({o,they:trustOf(o.id,n.id),mine:trustOf(n.id,o.id),bd:opBD(o.id,n.id),r:relOf(n.id,o.id)||{},d:ndist(n.id,o.id)})).sort((x,y)=>y.they-x.they);
+ const cnt=[0,0,0,0];L.forEach(x=>{cnt[x.they>=65?0:x.they>=45?1:x.they>=25?2:3]++});
+ const head=`<div class="mu" style="font-size:12px;margin-bottom:6px">各国が自国に抱く印象度（0〜100）です。内訳は 相性・距離・国力・悪名・関係・共通の友/敵・過去の出来事の合計で、同盟・貿易の成否やAIの開戦判断に使われます。</div><div class="kv"><div><span>友好以上</span>${cnt[0]}国</div><div><span>中立</span>${cnt[1]}国</div><div><span>不信</span>${cnt[2]}国</div><div><span>敵意</span>${cnt[3]}国</div></div>`;
+ return head+L.map(x=>{const tg=(x.r.war?'<span class="tag w">戦争</span>':"")+(x.r.ally?'<span class="tag a">同盟</span>':"")+(x.r.trade?'<span class="tag t">貿易</span>':"");
+  const ch=x.bd.items.map(([l,v])=>`<span style="color:${v>0?"#6fd48a":"#ff8d88"};white-space:nowrap">${l}${v>0?"+":""}${v}</span>`).join(" ");
+  return `<div style="padding:7px 0;border-bottom:1px solid var(--ln)"><div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:${colOf(x.o.id)}"></span><a data-a="focus" data-b="${x.o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${x.o.name}国</a>${tg}<span class="mu" style="font-size:11px">${x.d>=99?"距離不明":x.d===1?"隣接":x.d+"国先"}</span><span style="margin-left:auto"><b style="color:${opCol(x.they)}">${Math.round(x.they)}</b> <span class="mu">${opLabel(x.they)}</span></span></div><div class="bar"><i style="width:${x.they}%;background:${opCol(x.they)}"></i></div><div style="font-size:11px;margin-top:2px;line-height:1.5">${ch||'<span class="mu">特記事項なし</span>'}</div><div class="mu" style="font-size:11px">自国から見た印象 ${Math.round(x.mine)}（${opLabel(x.mine)}）</div></div>`}).join("")}
 function tDip(){
  const n=me(),nb=new Set(neighbors(n.id));
  const list=alive().filter(o=>o.id!==n.id).sort((a,b)=>(+R(n.id,b.id).war)-(+R(n.id,a.id).war)||(+nb.has(b.id))-(+nb.has(a.id))||pow(b)-pow(a));
- const head=`<div class="mu" style="font-size:12px;margin-bottom:4px">悪名 ${Math.round(n.infamy||0)}（40を超えると外交を拒否され、全国に開戦理由を与えます）</div>`;
+ const head=`<div class="mu" style="font-size:12px;margin-bottom:4px">悪名 ${Math.round(n.infamy||0)}（40を超えると外交を拒否され、全国に開戦理由を与えます）。印象度は同盟・貿易の成否とAIの開戦判断に影響し、戦争・同盟破棄・貿易解消で下がります。提案が断られると再提案まで待機が必要です。</div><div class="mu" style="font-size:12px;margin-bottom:4px">貿易 <b>${tradeCount(n.id)}/${tradeCap(n)}</b>枠。貿易は隣国〜2国先（陸路）か、両国に港がある国（海路・${TRSEA}国先まで）としか結べません。収益は、相手の特産品が自国に無いほど・隣国ほど・同盟国ほど増えます。枠は領土・港で増え、同盟は同盟圏${ALMAX}国まで（距離3国先まで）。同盟国の同盟国は自動で同盟国になります。</div>`;
  return head+(list.map(o=>{const r=R(n.id,o.id);
   let st=(r.war?'<span class="tag w">戦争</span>':"")+(r.ally?'<span class="tag a">同盟</span>':"")+(r.trade?'<span class="tag t">貿易</span>':""),info="";
   if(r.war){const w=getWar(n.id,o.id),my=wsOf(w,n.id),g=w.goals.filter(x=>S.prov[x].owner===w.a).length;
    info=` 戦争スコア <b style="color:${my>=0?"#6fd48a":"#ff8d88"}">${my>=0?"+":""}${Math.round(my)}</b>`+(w.goals.length&&w.a===n.id?`　目標${g}/${w.goals.length}`:"")}
   else if(nb.has(o.id)){const cb=hasCB(n.id,o.id),pc=S.cbs.find(c=>c.a===n.id&&c.b===o.id&&!c.ready);
-   if(cb)st+='<span class="tag a">開戦理由</span>';else if(pc)st+=`<span class="tag">理由作成 ${S.day-pc.start}/${pc.days}日</span>`}
+   if(cb)st+=`<span class="tag a">${cb.l}</span>`;else if(pc)st+=`<span class="tag">理由作成 ${S.day-pc.start}/${pc.days}日</span>`}
   let b="";
   if(r.war)b+=`<button class="pri" data-a="peace" data-b="${o.id}">講和会議</button>`;
-  else{b+=r.ally?`<button data-a="unally" data-b="${o.id}">同盟破棄</button>`:`<button data-a="ally" data-b="${o.id}">同盟</button>`;
-   b+=r.trade?`<button data-a="untrade" data-b="${o.id}">貿易解消</button>`:`<button data-a="trade" data-b="${o.id}">貿易</button>`;
+  else{const ca=Math.max(0,(r.cdA||0)-S.day),ct=Math.max(0,(r.cdT||0)-S.day);
+   b+=r.ally?`<button data-a="unally" data-b="${o.id}">同盟破棄</button>`:`<button data-a="ally" data-b="${o.id}" ${ca?"disabled":""}>同盟${ca?`（${ca}日）`:""}</button>`;
+   const tb=r.trade?"":tradeBlock(n.id,o.id),tv=tradeVal(n.id,o.id).toFixed(1);if(r.trade)info+=`　貿易収益+${tv}/日`;else if(tb)info+=`　貿易不可（${tb}）`;
+    b+=r.trade?`<button data-a="untrade" data-b="${o.id}">貿易解消</button>`:`<button data-a="trade" data-b="${o.id}" ${ct||tb?"disabled":""}>貿易+${tv}${ct?`（${ct}日）`:""}</button>`;
    if(nb.has(o.id))b+=`<button class="dg" data-a="war" data-b="${o.id}">宣戦</button>`}
-  return `<div class="row"><div class="nm"><span class="dot" style="background:${colOf(o.id)}"></span><a data-a="focus" data-b="${o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${o.name}国</a> ${nb.has(o.id)?'<span class="tag">隣接</span>':""}${st}<div class="mu">国力${Math.round(pow(o))} 領土${owned(o.id).length}${info}</div></div><div class="bt">${b}</div></div>`}).join("")||"<div class='mu'>他国は存在しません。</div>");
+  return `<div class="row"><div class="nm"><span class="dot" style="background:${colOf(o.id)}"></span><a data-a="focus" data-b="${o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${o.name}国</a> ${nb.has(o.id)?'<span class="tag">隣接</span>':""}${st}<div class="mu">国力${Math.round(pow(o))} 領土${owned(o.id).length}${info}　印象度 <b style="color:${opCol(opOf(o.id,n.id))}">${Math.round(opOf(o.id,n.id))}</b>（${opLabel(opOf(o.id,n.id))}）</div></div><div class="bt">${b}</div></div>`}).join("")||"<div class='mu'>他国は存在しません。</div>");
 }
 function tAlly(){
  const n=me(),al=alliesOf(n.id),wars=S.nations.filter(o=>o.alive&&R(n.id,o.id).war);
@@ -995,30 +1377,30 @@ function tAlly(){
   callable=wars.filter(e=>!R(o.id,e.id).war&&!R(o.id,e.id).ally);
   const tags=ew.map(x=>`<span class="tag ${R(n.id,x.id).war?"a":"w"}">${x.name}${R(n.id,x.id).war?"（共同）":""}</span>`).join("")||'<span class="mu">なし</span>';
   return `<div class="card"><div class="row" style="border:0;padding:0"><div class="nm"><span class="dot" style="background:${colOf(o.id)}"></span><b><a data-a="focus" data-b="${o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${o.name}国</a></b> <span class="mu">国力${Math.round(pow(o))}／領土${owned(o.id).length}／兵力${Math.floor(o.army)}</span></div></div>
-  <div style="font-size:12px">信頼度 <b style="color:${trc(t)}">${Math.round(t)}</b>/100 <span class="mu">（共通の敵と戦うと上昇。0で同盟解消）</span></div><div class="bar"><i style="width:${t}%;background:${trc(t)}"></i></div>
+  <div style="font-size:12px">印象度 <b style="color:${trc(t)}">${Math.round(t)}</b>/100 <span class="mu">（共通の敵と戦うと上昇。10以下で同盟解消）</span></div><div class="bar"><i style="width:${t}%;background:${trc(t)}"></i></div>
   <div style="font-size:12px">交戦中：${tags}</div>
   <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${callable.map(e=>`<button class="pri" data-a="jreq" data-b="${o.id}" data-e="${e.id}">${e.name}国へ参戦要請</button>`).join("")||'<span class="mu" style="font-size:12px">要請できる戦争がありません</span>'}</div>
   <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"><button data-a="sgold" data-b="${o.id}" ${n.gold<100?"disabled":""}>資金支援 💰100</button><button data-a="seq" data-b="${o.id}" ${(n.eq||0)<20?"disabled":""}>装備支援 🔧20</button><button data-a="aid" data-b="${o.id}">援助要請</button><button class="dg" data-a="unally" data-b="${o.id}">同盟破棄</button></div></div>`}).join("");
  const meds=[];for(let x=0;x<al.length;x++)for(let y=x+1;y<al.length;y++){const A=al[x],B=al[y];if(!R(A.id,B.id).ally&&!R(A.id,B.id).war)meds.push(`<div class="row"><div class="nm"><span class="dot" style="background:${A.color}"></span>${A.name}国 ⇄ <span class="dot" style="background:${B.color}"></span>${B.name}国${R(A.id,B.id).truce>S.day?' <span class="mu">(休戦中)</span>':''}</div><button class="pri" data-a="mediate" data-b="${A.id}" data-e="${B.id}">同盟を仲介</button></div>`)}
  const fronts=wars.map(e=>{const co=al.filter(a=>R(a.id,e.id).war);return `<div class="row"><div class="nm"><span class="dot" style="background:${colOf(e.id)}"></span>${e.name}国</div><div>${co.length?co.map(a=>`<span class="tag a">${a.name}</span>`).join(""):'<span class="mu">単独</span>'}</div></div>`}).join("");
- return `<div class="mu" style="font-size:12px;margin-bottom:6px">同盟 ${al.length}/3。同盟国の領土は自由に通行でき、補給も受けられます。同盟国どうしが同じ戦闘に加わると<b>連携ボーナス+12%</b>。同盟国どうしの同盟（三国同盟）は「仲介」で結べます。同じ同盟圏は同じ色で表示されます。共通の敵と戦うほど信頼度が上がり、要請が通りやすくなります。</div>`
- +jo+(meds.length?`<div class="card"><b>三国同盟の仲介</b><div class="mu" style="font-size:12px">あなたの同盟国どうしを同盟させます（成功すると同じ色になり、互いに戦わなくなります）</div>${meds.join("")}</div>`:"")+(cards||'<div class="mu">同盟国がありません。外交タブから同盟を申し込めます（国力差が極端でない国・悪名40以下）。</div>')
+ return `<div class="mu" style="font-size:12px;margin-bottom:6px">同盟 ${al.length}/${ALMAX-1}。同盟国の領土は自由に通行でき、補給も受けられます。同盟国どうしが同じ戦闘に加わると<b>連携ボーナス+12%</b>。同盟国の同盟国は自動で同盟国になります（自分から破棄・裏切った相手とは自動では結び直されません）。同じ同盟圏は同じ色で表示されます。共通の敵と戦うほど印象度が上がり、要請が通りやすくなります。</div>`
+ +jo+(meds.length?`<div class="card"><b>同盟国どうしの仲介</b><div class="mu" style="font-size:12px">通常は自動で同盟になりますが、破棄・交戦などで結ばれていない同盟国どうしを仲介で結び直せます（成功すると同じ同盟圏になり、互いに戦わなくなります）</div>${meds.join("")}</div>`:"")+(cards||'<div class="mu">同盟国がありません。外交タブから同盟を申し込めます（国力差が極端でない国・悪名40以下）。</div>')
  +`<div style="margin:10px 0 2px"><b>共同戦線</b></div>`+(fronts||'<div class="mu">戦争中の国はありません。</div>');
 }
 function tRank(){
  const l=[...alive()].sort((a,b)=>pow(b)-pow(a));
- return l.slice(0,15).map((o,i)=>`<div class="row"><b style="width:26px">${i+1}</b><div class="nm"><span class="dot" style="background:${colOf(o.id)}"></span><a data-a="focus" data-b="${o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${o.name}国</a>${o.id===S.player?" ★":""}</div><span class="mu">領土${owned(o.id).length}　国力${Math.round(pow(o))}</span></div>`).join("")+`<div class="mu" style="margin-top:6px">占領した県は30日間収入ゼロ・人口20%減。占領地は不穏度が上がるので駐屯と慰撫を。領土が増えるほど侵攻は難しく、12県を超えると規模に応じて隣国が敵対しやすくなります（同時に攻めてくる国数にも上限あり）。同盟国は対象外です。全国の95%を掌握すれば天下統一です。<br>生存国家：${l.length}/47</div>`;
+ return l.slice(0,15).map((o,i)=>`<div class="row"><b style="width:26px">${i+1}</b><div class="nm"><span class="dot" style="background:${colOf(o.id)}"></span><a data-a="focus" data-b="${o.id}" style="color:var(--tx);text-decoration:underline dotted;cursor:pointer">${o.name}国</a>${o.id===S.player?" ★":""}</div><span class="mu">領土${owned(o.id).length}　国力${Math.round(pow(o))}</span></div>`).join("")+`<div class="mu" style="margin-top:6px">戦闘で占領した県は30日間収入ゼロ・人口20%減（講和で割譲された県は人口10%減）。占領地は不穏度が上がるので駐屯と慰撫を。領土が増えるほど侵攻は難しく、12県を超えると規模に応じて隣国が敵対しやすくなります（同時に攻めてくる国数にも上限あり）。同盟国は対象外です。自国と同盟国で全ブロックを領有すれば全国統一、自国だけで全ブロックを領有すれば完全統一です。<br>生存国家：${l.length}/47</div>`;
 }
 function lineChart(series,o){o=o||{};const W=340,H=o.h||120,L=36,B=16,T=6,Rr=6,h=S.hist;if(h.length<2)return '<div class="mu" style="font-size:12px">データ蓄積中（10日ごとに記録）</div>';
  let mn=Infinity,mx=-Infinity;series.forEach(se=>se.v.forEach(v=>{if(v<mn)mn=v;if(v>mx)mx=v}));if(o.zero&&mn>0)mn=0;if(mx===mn){mx+=1;mn-=o.zero?0:1}
  const d0=h[0].d,d1=h[h.length-1].d||1,X=d=>L+(d-d0)/Math.max(1,d1-d0)*(W-L-Rr),Y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B),f=v=>Math.abs(v)>=1000?Math.round(v):+v.toFixed(Math.abs(v)<10?1:0);
  let g="";for(let k=0;k<=2;k++){const v=mn+(mx-mn)*k/2,y=Y(v);g+=`<line x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}" stroke="#2a3a4a"/><text x="${L-4}" y="${y+3}" fill="#8aa0b4" font-size="9" text-anchor="end">${f(v)}</text>`}
  g+=`<text x="${L}" y="${H-3}" fill="#8aa0b4" font-size="9">${d0}日</text><text x="${W-Rr}" y="${H-3}" fill="#8aa0b4" font-size="9" text-anchor="end">${d1}日</text>`;
- series.forEach(se=>{g+=`<polyline fill="none" stroke="${colOf(se.id)}" stroke-width="${se.w||1.6}" points="${se.v.map((v,i)=>X(h[i].d).toFixed(1)+","+Y(v).toFixed(1)).join(" ")}"/>`});
- const lg=series.length>1?`<div style="font-size:11px;margin-top:2px">${series.map(se=>`<span style="margin-right:8px"><span class="dot" style="background:${colOf(se.id)};width:8px;height:8px"></span>${se.name}</span>`).join("")}</div>`:"";
+ series.forEach(se=>{g+=`<polyline fill="none" stroke="${(se.color||colOf(se.id))}" stroke-width="${se.w||1.6}" points="${se.v.map((v,i)=>X(h[i].d).toFixed(1)+","+Y(v).toFixed(1)).join(" ")}"/>`});
+ const lg=series.length>1?`<div style="font-size:11px;margin-top:2px">${series.map(se=>`<span style="margin-right:8px"><span class="dot" style="background:${(se.color||colOf(se.id))};width:8px;height:8px"></span>${se.name}</span>`).join("")}</div>`:"";
  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${g}</svg>${lg}`}
 function tStat(){
- const n=me(),h=S.hist||[],my=owned(n.id).length,pct=my/NB*100,need=Math.max(0,Math.ceil(NB*.95)-my);
+ const n=me(),h=S.hist||[],my=owned(n.id).length,pct=my/NB*100,UA=uniStat(),pa=(my+UA.ally)/NB*100;
  const cnt={};S.prov.forEach(p=>cnt[p.owner]=(cnt[p.owner]||0)+1);
  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,10);
  const topIds=top.filter(([id])=>+id!==n.id).slice(0,4).map(([id])=>+id);
@@ -1026,12 +1408,16 @@ function tStat(){
  const inc=n.alive?income(n):0,up=upkeep(n);
  const bi=owned(n.id).filter(i=>!(S.prov[i].u>0)).map(i=>[i,blockInc(n,i)]).sort((a,b)=>b[1]-a[1]).slice(0,6),btot=owned(n.id).reduce((t,i)=>t+(S.prov[i].u>0?0:blockInc(n,i)),0)||1;
  const sec=t=>`<div style="margin:12px 0 2px"><b>${t}</b></div>`;
- return `<div class="card"><b>統一進捗</b> <span class="mu">全${NB}ブロックの95%で天下統一</span>
-  <div class="bar" style="height:12px"><i style="width:${Math.min(100,pct/95*100)}%;background:var(--ac)"></i></div>
-  <div>${my}/${NB}ブロック（${pct.toFixed(1)}%）<span class="mu">　あと${need}ブロック</span></div></div>`
+ return `<div class="card"><b>統一進捗</b>${S.uni?` <span style="color:var(--ac)">${S.uni===2?"完全統一達成":"全国統一達成"}</span>`:""}
+  <div class="mu" style="margin-top:4px">全国統一：自国＋同盟国で100%</div>
+  <div class="bar" style="height:10px"><i style="width:${Math.min(100,pa)}%;background:#6fd48a"></i></div>
+  <div>${my+UA.ally}/${NB}ブロック（${pa.toFixed(1)}%）<span class="mu">　同盟国${UA.names.length}国で${UA.ally}</span></div>
+  <div class="mu" style="margin-top:6px">完全統一：自国で100%</div>
+  <div class="bar" style="height:10px"><i style="width:${Math.min(100,pct)}%;background:var(--ac)"></i></div>
+  <div>${my}/${NB}ブロック（${pct.toFixed(1)}%）<span class="mu">　あと${NB-my}</span></div></div>`
  +sec("領土の推移（県換算）")+lineChart(ser,{h:130,zero:true})
  +sec("収支の推移（1日あたり）")+lineChart([{name:"総収入",color:"#6fd48a",v:h.map(x=>x.gi)},{name:"軍維持費",color:"#ff8d88",v:h.map(x=>x.u)},{name:"差引",color:"#e0a030",v:h.map(x=>x.gi-x.u),w:2.2}])
- +`<div class="kv" style="margin-top:4px"><div><span>総収入</span>+${(inc+up).toFixed(1)}</div><div><span>軍維持費</span>−${up.toFixed(1)}</div><div><span>差引</span>${inc>=0?"+":""}${inc.toFixed(1)}/日</div><div><span>貿易収入</span>+${(S.nations.filter(o=>o.alive&&o.id!==n.id&&R(n.id,o.id).trade).length*(n.pol==="diplo"?6:4)).toFixed(0)}</div></div>`
+ +`<div class="kv" style="margin-top:4px"><div><span>総収入</span>+${(inc+up).toFixed(1)}</div><div><span>軍維持費</span>−${up.toFixed(1)}</div><div><span>差引</span>${inc>=0?"+":""}${inc.toFixed(1)}/日</div><div><span>貿易収入</span>+${S.nations.filter(o=>o.alive&&o.id!==n.id&&R(n.id,o.id).trade).reduce((t,o)=>t+tradeVal(n.id,o.id),0).toFixed(1)}</div><div><span>関税・都市・同盟事業</span>+${extraInc(n).t.toFixed(1)}</div><div><span>特産品収入（補正前）</span>+${resTotal(n).toFixed(1)}</div><div><span>国債の利息</span>−${((n.debt||0)*DEBTR).toFixed(1)}</div></div><div class="mu" style="margin-top:2px">特産品：${resSum(n)}　世情：${(WORLDS[S.world]||{n:"—"}).n}</div>`
  +sec("資金の推移")+lineChart([{name:"資金",color:"#e0a030",v:h.map(x=>x.g)}])
  +sec("人口（万）と兵力")+lineChart([{name:"人口",color:"#6fa8ff",v:h.map(x=>x.p)}])+lineChart([{name:"兵力",color:"#ff8d88",v:h.map(x=>x.a)}],{h:90,zero:true})
  +sec("収入の多い県")+bi.map(([i,v])=>`<div class="row"><div class="nm"><a data-a="dfocus" data-p="${i}" style="color:var(--ac);cursor:pointer">${BN[i]}</a><div class="bar"><i style="width:${v/btot*100*3}%;background:#6fd48a;max-width:100%"></i></div></div><span class="mu">${v.toFixed(1)}（${(v/btot*100).toFixed(0)}%）</span></div>`).join("")
@@ -1042,39 +1428,41 @@ const tLog=()=>`<div class="log">${S.log.map(e=>`<div><span class="mu">${e.d}</s
 const onAct=e=>{
  const t=e.target.closest("[data-a]");if(!t||!S||!me().alive)return;
  const a=t.dataset.a,b=+t.dataset.b,p=+t.dataset.p,i=+t.dataset.i,n=me(),id=n.id;
- if(a==="infra")doInfra(n);else if(a==="tech")doTech(n);else if(a==="recruit")doRecruit(n);
+ if(a==="infra")doInfra(n);else if(a==="tech")doTech(n);else if(a==="com")doCom(n);else if(a==="recruit")doRecruit(n,undefined,+t.dataset.t||0);
  else if(a==="fac")doFac(n);else if(a==="msup")n.ms=Math.min(1,+(msOf(n)+.1).toFixed(1));else if(a==="msdn")n.ms=Math.max(0,+(msOf(n)-.1).toFixed(1));
  else if(a==="taxup")n.tax=Math.min(.5,+(n.tax+.05).toFixed(2));else if(a==="taxdn")n.tax=Math.max(.1,+(n.tax-.05).toFixed(2));
  else if(a==="war")openWar(b);else if(a==="peace")openPeace(b);
  else if(a==="ally")proposeAlly(id,b);else if(a==="unally")breakAlly(id,b);
  else if(a==="trade")proposeTrade(id,b);else if(a==="untrade")cutTrade(id,b);
  else if(a==="oy"||a==="on"){const o=S.offers[i];if(o){if(a==="on"&&o.t==="join")addTrust(id,o.f,-8);if(a==="oy"){const r=R(id,o.f);
-  if(o.t==="join"){acceptJoin(o)}else if(o.t==="peace"||o.t==="surrender"){if(r.war){const w=getWar(id,o.f);signPeace(w,id,o.t==="surrender"?autoDemands(w,id,Math.max(0,wsOf(w,id))):new Set())}}else if(!r.war){if(o.t==="ally"){mkAlly(id,o.f,45);logm(`${n.name}国と${S.nations[o.f].name}国が同盟を結んだ。`)}else r.trade=true;toast("成立した。")}}
+  if(o.t==="join"){acceptJoin(o)}else if(o.t==="peace"||o.t==="surrender"){if(r.war){const w=getWar(id,o.f);signPeace(w,id,o.t==="surrender"?autoDemands(w,id,Math.max(0,wsOf(w,id))):new Set())}}else if(!r.war){if(o.t==="ally"){mkAlly(id,o.f,45);logm(`${n.name}国と${S.nations[o.f].name}国が同盟を結んだ。`);toast("成立した。")}else if(tradeBlock(id,o.f))toast("貿易できない："+tradeBlock(id,o.f));else{r.trade=true;OPC.clear();toast("成立した。")}}}
   S.offers.splice(i,1)}}
  else if(a==="dsel"){selD.has(i)?selD.delete(i):selD.add(i)}
  else if(a==="dhere"){DB[sel].filter(d=>d.o===id).forEach(d=>selD.add(d.id))}
  else if(a==="dall"){myDivs(id).forEach(d=>selD.add(d.id))}
- else if(a==="dclr")selD.clear();
+ else if(a==="dnav"){DB[sel].filter(d=>d.o===id&&isNav(d)).forEach(d=>selD.add(d.id))}
+  else if(a==="dclr")selD.clear();
  else if(a==="dstop")selDivs().forEach(d=>{d.path=[];d.prog=0});
  else if(a==="drecall")selDivs().forEach(recall);
  else if(a==="dfront"){const sl=selDivs(),ds=sl.length?sl:myDivs(id).filter(d=>d.gar===undefined&&d.str>=2);const[ok,fail]=deployFront(ds);toast(ok?`${ok}個師団を前線へ展開${fail?`（${fail}個は到達不可）`:""}`:"展開できる前線がありません");if(ok)selD.clear()}
  else if(a==="dborder"){const sl=selDivs(),ds=sl.length?sl:myDivs(id).filter(d=>d.gar===undefined&&d.str>=2);const[ok,fail]=deployBorder(ds);toast(ok?`${ok}個師団を国境へ均等に配置${fail?`（${fail}個は到達不可）`:""}`:"配置できる国境がありません");if(ok)selD.clear()}
- else if(a==="dspread"){const sl=selDivs(),ds=sl.length?sl:myDivs(id).filter(d=>d.gar===undefined&&d.str>=1);const c=spreadDivs(ds,false);toast(c?`${c}個師団を分散させた`:"分散できる師団がありません");if(c)selD.clear()}
+ else if(a==="dspread"){const sl=selDivs();if(!sl.length)toast("分散する師団を選択してください");else{const c=splitDivs(sl);toast(c?`${c}個師団を半分に分け、隣の自領へ送りました`:"分散できません（兵力2未満・移動中・隣に自領なし）")}}
  else if(a==="dsp"){n.sp=!n.sp;toast(n.sp?"自動分散：ON（待機中の師団が重ならないよう散らばります）":"自動分散：OFF")}
  else if(a==="dcamp"){const o=S.prov[sel].owner;if(o===id||!R(id,o).war)toast("戦争中の相手国の県を選んでから実行してください");else{let ds=selDivs();if(!ds.length)ds=myDivs(id).filter(d=>d.gar===undefined&&d.str>=2);const c=setCamp(ds,o);toast(`${c}個師団が${S.nations[o].name}国を自動攻略します`);selD.clear()}}
  else if(a==="dauto"){const sl=selDivs();(sl.length?sl:myDivs(id)).forEach(d=>{d.man=false;d.camp=undefined;d.gar=undefined});toast("自動管理に戻しました")}
  else if(a==="dag"){n.ag=!n.ag;toast(n.ag?"自動駐屯：ON（待機中の師団が不穏な占領地へ向かいます）":"自動駐屯：OFF")}
  else if(a==="mediate"){toast(mediate(b,+t.dataset.e),4500)}
  else if(a==="jreq"){toast(reqJoin(b,+t.dataset.e),4000)}
- else if(a==="sgold"){toast(giveGold(n,b)?"💰100を支援した（信頼度+4）":"支援できない")}
- else if(a==="seq"){toast(giveEq(n,b)?"🔧20を支援した（信頼度+3）":"支援できない")}
+ else if(a==="sgold"){toast(giveGold(n,b)?"💰100を支援した（印象度+4）":"支援できない")}
+ else if(a==="seq"){toast(giveEq(n,b)?"🔧20を支援した（印象度+3）":"支援できない")}
  else if(a==="aid"){toast(askAid(n,b),4000)}
  else if(a==="dfocus"){sel=p;focusB(p,1.8)}
  else if(a==="focus"){sel=capOf(b);focusB(sel,1.6)}
  else if(a==="pac")pacify(n,sel);else if(a==="pacall")pacifyAll(n);
  else if(a==="pacat"){if(pacify(n,p)){sel=p}}
  else if(a==="dev")doDev(n,sel);else if(a==="fort")doFort(n,sel);
- else if(a==="recat")doRecruit(n,sel);
+ else if(a==="recat")doRecruit(n,sel,+t.dataset.t||0);
+ else if(a==="debt"){if(t.dataset.k==="in"){if((n.debt||0)+500<=DEBTCAP){n.debt=(n.debt||0)+500;n.gold+=500;toast("国債を発行した（💰+500）")}}else{const x=Math.min(500,n.debt||0,Math.floor(n.gold));if(x>0){n.debt-=x;n.gold-=x;toast(`国債を${x}返済した`)}}}
  else if(a==="pol"){if(!setPol(n,t.dataset.k))toast(n.pol===t.dataset.k?"採用中の国策です":`国策は変更後${POLCD}日は切り替えられず、💰${POLCOST}が必要です`)}
  else if(a==="dgo"){const sl=selDivs();if(sl.length){const[ok,fail]=orderDivs(sl,sel);toast(ok?`${ok}個師団に命令${fail?`（${fail}個は到達不可）`:""}`:"そこへは進めない");if(ok)selD.clear()}}
  ui();
@@ -1087,20 +1475,47 @@ document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>{speed=+b.datase
 // メニュー・タイトル
 $("#dlg").addEventListener("click",dlgClick);
 $("#bMenu").onclick=()=>$("#menu").classList.remove("hide");$("#mClose").onclick=()=>$("#menu").classList.add("hide");
+function renderSnd(){$("#bSnd").textContent="効果音："+["オフ","小","中"][SFX.lv];$("#bBgm").textContent="BGM："+["オフ","小","中"][BGM.lv];$("#tSnd").textContent="効果音："+["オフ","小","中"][SFX.lv];$("#tBgm").textContent="BGM："+["オフ","小","中"][BGM.lv]}renderSnd();$("#tSnd").onclick=()=>{SFX.cycle();renderSnd()};$("#tBgm").onclick=()=>{BGM.cycle();renderSnd()};$("#bSnd").onclick=()=>{SFX.cycle();renderSnd()};$("#bBgm").onclick=()=>{BGM.cycle();renderSnd()};
+["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>BGM.kick(),{passive:true}));
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("button");if(b&&!b.disabled&&b.id!=="bSnd")SFX.play("click",80)},true);
 renderAP();$("#apBox").addEventListener("click",e=>{const k=e.target.dataset.ap;if(!k)return;AP[k]=AP[k]?0:1;try{localStorage.setItem("jp47_ap",JSON.stringify(AP))}catch(e){}renderAP()});
 addEventListener("keydown",e=>{if(!S)return;if(e.target.closest&&e.target.closest("input,textarea"))return;const pk={ArrowLeft:[60,0],ArrowRight:[-60,0],ArrowUp:[0,60],ArrowDown:[0,-60],a:[60,0],d:[-60,0],w:[0,60],s:[0,-60]}[e.key];
  if(pk){e.preventDefault();vAnim=null;view.x+=pk[0];view.y+=pk[1];clampView();return}
  if(e.key==="+"||e.key==="="){zoomBy(1.4);return}if(e.key==="-"){zoomBy(1/1.4);return}if(e.key==="0"||e.key==="Home"){fitView();return}
  if(e.code==="Space"){e.preventDefault();speed=speed?0:1;ui()}else if(["1","2","3","4"].includes(e.key)){speed=[0,.5,1,3,10][+e.key];ui()}});
 $("#mSave").onclick=()=>{openSlots("save")};
+$("#mHelp").onclick=()=>{$("#menu").classList.add("hide");$("#help").classList.remove("hide")};$("#hClose").onclick=()=>$("#help").classList.add("hide");
 $("#mTitle").onclick=()=>{$("#menu").classList.add("hide");showTitle()};
-$("#selPref").innerHTML=P.map((p,i)=>`<option value="${i}">${p[0]}（人口${p[3]}万）</option>`).join("");
-function showTitle(){$("#title").classList.remove("hide");$("#bCont").classList.toggle("hide",!hasAnySave());speed=0}
-function begin(){$("#title").classList.add("hide");speed=.5;resize();ui()}
+$("#selPref").innerHTML=P.map((p,i)=>`<option value="${i}">${p[0]}（人口${p[3]}万／収入×${hcOf(p[3]).toFixed(2)}）</option>`).join("");
+function showTitle(){TB.start();$("#tMain").classList.remove("hide");$("#tSet").classList.add("hide");$("#title").classList.remove("hide");$("#bCont").classList.toggle("hide",!hasAnySave());speed=0}
+function begin(){TB.stop();$("#title").classList.add("hide");speed=.5;resize();ui()}
+$("#selDiff").innerHTML=DIFFS.map((d,i)=>`<option value="${i}"${i===2?" selected":""}>${d.n}</option>`).join("");
+$("#selMode").innerHTML=Object.entries(MODES).map(([k,m])=>`<option value="${k}"${k==="normal"?" selected":""}>${m.n}</option>`).join("");
+const updNote=()=>{$("#diffNote").textContent=DIFFS[+$("#selDiff").value].note;$("#modeNote").textContent=MODES[$("#selMode").value].note};
+$("#selDiff").onchange=$("#selMode").onchange=updNote;updNote();
+$("#bSingle").onclick=()=>{$("#tMain").classList.add("hide");$("#tSet").classList.remove("hide")};
+$("#bBack").onclick=()=>{$("#tSet").classList.add("hide");$("#tMain").classList.remove("hide")};
 $("#bStart").onclick=()=>{newGame(+$("#selPref").value);begin()};
 $("#bRand").onclick=()=>{newGame(Math.floor(Math.random()*47));begin()};
 $("#bCont").onclick=()=>openSlots("load");
 try{if(hasAnySave())$("#bCont").classList.remove("hide")}catch(e){}
+// ===== スタート画面の背景（47県が塗り替わっていく演出） =====
+const TB=(()=>{const cv=$("#tbg"),c=cv.getContext("2d"),pal=["#e0a030","#4caf70","#3a78b5","#d9534f","#9a6fd0","#d0c040","#40b8b0","#e07a9a"];
+ const N=P.map(p=>({x:(p[2]-137)*Math.cos(.62),y:-(p[1]-37.5),col:0,fl:0})),E=[],nb=N.map(()=>[]);let run=0,W=0,H=0,dpr=1,nt=0,full=0;
+ N.forEach((a,i)=>{N.map((b,j)=>[j,(a.x-b.x)**2+(a.y-b.y)**2]).filter(x=>x[0]!==i).sort((p,q)=>p[1]-q[1]).slice(0,3).forEach(([j])=>{if(!nb[i].includes(j)){nb[i].push(j);nb[j].push(i)}})});
+ nb.forEach((l,i)=>l.forEach(j=>{if(i<j)E.push([i,j])}));
+ const reset=()=>{N.forEach((n,i)=>{n.col=Math.floor(Math.random()*pal.length);n.fl=0});full=0};reset();
+ const xs=N.map(n=>n.x),ys=N.map(n=>n.y),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+ function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr}
+ function draw(t){if(!run)return;if(cv.width!==Math.floor(innerWidth*dpr))size();
+  if(t-nt>650){nt=t;if(full){if(t-full>2500)reset()}else{const e=E[Math.floor(Math.random()*E.length)],f=Math.random()<.5?e:[e[1],e[0]];if(N[f[0]].col!==N[f[1]].col){N[f[1]].col=N[f[0]].col;N[f[1]].fl=1}
+    if(N.every(n=>n.col===N[0].col))full=t}}
+  c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);const s=Math.min(W*.92/(x1-x0),H*.8/(y1-y0)),ox=W/2-(x0+x1)/2*s,oy=H/2-(y0+y1)/2*s,P_=n=>[ox+n.x*s,oy+n.y*s];
+  c.lineWidth=1;for(const[i,j]of E){const a=P_(N[i]),b=P_(N[j]),same=N[i].col===N[j].col;c.strokeStyle=same?pal[N[i].col]+"99":"#2a3a4a";c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+  for(const n of N){const p=P_(n);c.fillStyle=pal[n.col];c.beginPath();c.arc(p[0],p[1],3.5,0,7);c.fill();if(n.fl>0){c.strokeStyle=pal[n.col];c.globalAlpha=n.fl;c.beginPath();c.arc(p[0],p[1],4+(1-n.fl)*16,0,7);c.stroke();c.globalAlpha=1;n.fl=Math.max(0,n.fl-.02)}}
+  requestAnimationFrame(draw)}
+ return{start(){if(run)return;run=1;size();requestAnimationFrame(draw)},stop(){run=0}}})();
+TB.start();$("#tHelp").onclick=()=>$("#help").classList.remove("hide");
 resize();requestAnimationFrame(t=>{last=t;frame(t)});
 </script>
 </body></html>
